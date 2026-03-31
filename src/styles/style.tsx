@@ -34,6 +34,9 @@ export const GlobalStyles = createGlobalStyle`
         display: flex;
         justify-content: center;
     }
+    a {
+        text-decoration: none;
+    }
     .app {
         width: 100%;
         max-width: 430px;

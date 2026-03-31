@@ -14,12 +14,13 @@ const ButtonContainer = styled.button`
 `;
 
 interface IButton {
-    text:string
+    text:string,
+    onClick?: any,
 }
 
-function Button({text}:IButton) {
+function Button({text, onClick}:IButton) {
     return (
-        <ButtonContainer>{text}</ButtonContainer>
+        <ButtonContainer onClick={onClick}>{text}</ButtonContainer>
     )
 }
 

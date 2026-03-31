@@ -12,6 +12,12 @@ const Modal = styled.div`
     border-radius: 20px;
 `;
 
+const ScrollContainer = styled.div`
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`;
+
 
 function GroupSetting(){
     const theme = useTheme();
@@ -25,7 +31,7 @@ function GroupSetting(){
                     </span>
                 </div>
             </div>
-            <div style={{overflowY: 'scroll', flex: 1}}>
+            <ScrollContainer style={{overflowY: 'scroll', flex: 1}}>
                 <Modal style={{marginBottom: 20}}>
                     <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700, marginBottom: 10, display:'inline-block'}}>그룹 생성하기</span>
                     <Input placeholder='그룹명 입력' style={{backgroundColor: theme.white, marginBottom: 10}}/>
@@ -37,7 +43,7 @@ function GroupSetting(){
                     <Input placeholder='초대 코드 입력' style={{backgroundColor: theme.white, marginBottom: 10}}/>
                     <Button text='생성'/>
                 </Modal>
-            </div>
+            </ScrollContainer>
         </div>
     )
 }

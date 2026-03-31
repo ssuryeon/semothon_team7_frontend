@@ -1,9 +1,10 @@
-import styled, {useTheme} from 'styled-components';
+import {useTheme} from 'styled-components';
 import Header from '../components/Header.tsx';
 import Input from '../components/Input.tsx';
 import LogoWhite from '../components/LogoWhite.tsx';
 import Button from '../components/Button.tsx';
 import {Container} from '../components/Container.tsx';
+import {Link} from 'react-router';
 
 function Login() {
     const theme = useTheme()
@@ -21,10 +22,10 @@ function Login() {
                 <div style={{width: '100%'}}>
                     <Button text='로그인하기' />
                     <div style={{height: 10}} />
-                    <div style={{display: 'flex', flexDirection: 'row', fontSize: 10, justifyContent: 'center'}}>
+                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                         <span style={{color: theme.white, marginRight: 10}}>계정이 없으신가요?</span>
                         <span style={{color: theme.white, marginRight: 10}}>|</span>
-                        <span style={{color: theme.btnColor}}>회원가입하기</span>
+                        <Link to={{pathname: '/signup'}}><span style={{color: theme.btnColor}}>회원가입하기</span></Link>
                     </div>
                 </div>
             </Container>

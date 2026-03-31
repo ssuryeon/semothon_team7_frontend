@@ -3,9 +3,7 @@ import {Container} from '../components/Container';
 import {HeaderContainer} from '../components/Header';
 import LogoBlack from '../components/LogoBlack';
 import { IoIosArrowBack } from "react-icons/io";
-import TimeSetting from './TimeSetting';
-import AlarmSetting from './AlarmSetting';
-import GroupSetting from './GroupSetting';
+import {Outlet, useLocation, useNavigate} from'react-router';
 
 const OnboardingBtn = styled.button`
     width: 45%;
@@ -27,15 +25,45 @@ const Circle = styled.div`
 
 function Onboarding(){
     const theme = useTheme()
+    const navigate = useNavigate();
+    const location = useLocation();
+    const onPrevClick = () => {
+        const path = location.pathname;
+        console.log(path);
+        switch(path) {
+            case '/onboarding':
+                break
+            case '/onboarding/alarm':
+                navigate('/onboarding');
+                break
+            case '/onboarding/group':
+                navigate('/onboarding/alarm');
+                break
+        }
+    }
+    const onNextClick = () => {
+        const path = location.pathname;
+        console.log(path)
+        switch(path) {
+            case '/onboarding':
+                navigate('/onboarding/alarm');
+                break
+            case '/onboarding/alarm':
+                navigate('/onboarding/group');
+                break
+            case '/onboarding/group':
+                break
+        }
+    }
 
     return (
         <div style={{display: 'flex', width: '100%', height: '100%', flexDirection: 'column'}}>
             <HeaderContainer style={{justifyContent: 'center', position: 'relative'}}>
-                <IoIosArrowBack size={20} color={theme.btnColor} style={{position: 'absolute', left: 40}}/>
+                <IoIosArrowBack size={20} color={theme.btnColor} style={{position: 'absolute', left: 40, cursor: 'pointer'}} onClick={() => navigate(-1)}/>
                 <LogoBlack />
             </HeaderContainer>
             <Container >
-                <TimeSetting />
+                <Outlet />
                 <div style={{width: '100%', marginTop: 20}}>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}>
                         <Circle />
@@ -43,8 +71,8 @@ function Onboarding(){
                         <Circle />
                     </div>
                     <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <OnboardingBtn style={{backgroundColor: 'transparent', border: '2px solid white', color: theme.white}}>이전</OnboardingBtn>
-                        <OnboardingBtn style={{backgroundColor: 'white', border: 'none', color: theme.btnColor}}>다음</OnboardingBtn>
+                        <OnboardingBtn style={{backgroundColor: 'transparent', border: '2px solid white', color: theme.white}} onClick={onPrevClick}>이전</OnboardingBtn>
+                        <OnboardingBtn style={{backgroundColor: 'white', border: 'none', color: theme.btnColor}} onClick={onNextClick}>다음</OnboardingBtn>
                     </div>
                 </div>
             </Container>
