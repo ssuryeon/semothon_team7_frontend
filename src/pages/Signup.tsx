@@ -7,6 +7,7 @@ import Button from '../components/Button.tsx';
 import {useNavigate, Link} from 'react-router';
 import {signUp} from '../utils/auth.tsx';
 import {useState} from 'react';
+import {userStore} from '../stores/UserStore.tsx';
 
 function SignUp() {
     const theme = useTheme();
@@ -14,15 +15,22 @@ function SignUp() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const setUserinfo = userStore((state) => state.signUp);
+    console.log(userStore((state) => state.name));
+    
     const onClick = async () => {
         const res = await signUp(name, email, password);
         if(!res) {
             alert('사용자 정보를 다시 입력해 주세요.');
         }
         else {
-            const token = res.token;
-            const userinfo = res.userinfo;
-            console.log(token, userinfo);
+            const accessToken = res.accessToken;
+            const refreshToken = res.refreshToken;
+            const email = res.userinfo?.email;
+            const name = res.userinfo?.user_metadata.name;
+            console.log(accessToken, refreshToken);
+            console.log(res.userinfo);
+            setUserinfo(name, email as string, accessToken as string, refreshToken as string)
             navigate('/onboarding')
         }
     }

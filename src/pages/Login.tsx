@@ -7,11 +7,13 @@ import {Container} from '../components/Container.tsx';
 import {Link} from 'react-router';
 import {login} from '../utils/auth.tsx';
 import {useState} from 'react';
+import {userStore} from '../stores/UserStore.tsx';
 
 function Login() {
     const theme = useTheme()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const setUserinfo = userStore((state) => state.login);
     const onClick = async () => {
         const res = await login(email, password);
         if(!res) {
@@ -23,6 +25,8 @@ function Login() {
             const userinfo = res.userinfo;
             console.log(accessToken, refreshToken);
             console.log(userinfo);
+            setUserinfo(userinfo.email as string, accessToken);
+            console.log(userStore((state) => state.email));
         }
     }
 

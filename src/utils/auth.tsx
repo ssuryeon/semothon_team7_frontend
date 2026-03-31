@@ -21,9 +21,10 @@ export async function signUp(name:string, email:string, password:string) {
         return null;
     }
     console.log(`${data.user?.id}님 회원가입 되었습니다.`);
-    const token = data.session?.access_token;
+    const accessToken = data.session?.access_token;
+    const refreshToken = data.session?.refresh_token;
     const userinfo = data.user;
-    return {token, userinfo};
+    return {accessToken, refreshToken, userinfo};
 }
 
 export async function login(email:string, password:string) {
