@@ -5,10 +5,27 @@ import LogoWhite from '../components/LogoWhite.tsx';
 import {Container} from '../components/Container.tsx';
 import Button from '../components/Button.tsx';
 import {useNavigate, Link} from 'react-router';
+import {signUp} from '../utils/auth.tsx';
+import {useState} from 'react';
 
 function SignUp() {
     const theme = useTheme();
     const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const onClick = async () => {
+        const res = await signUp(name, email, password);
+        if(!res) {
+            alert('사용자 정보를 다시 입력해 주세요.');
+        }
+        else {
+            const token = res.token;
+            const userinfo = res.userinfo;
+            console.log(token, userinfo);
+            navigate('/onboarding')
+        }
+    }
 
     return (
         <div style={{display: 'flex', width: '100%', height: '100%', flexDirection: 'column'}}>
@@ -16,12 +33,12 @@ function SignUp() {
             <Container>
                 <div style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                     <LogoWhite />
-                    <Input placeholder='Name'/>
-                    <Input placeholder='ID (Email Address)'/>
-                    <Input placeholder='Password'/>
+                    <Input placeholder='Name' value={name} onChange={(e:any) => setName(e.currentTarget.value)}/>
+                    <Input placeholder='ID (Email Address)' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
+                    <Input placeholder='Password' value={password} onChange={(e:any) => setPassword(e.currentTarget.value)}/>
                 </div>
                 <div style={{width: '100%'}}>
-                    <Button text='가입하기' onClick={() => navigate('/onboarding')}/>
+                    <Button text='가입하기' onClick={onClick} />
                     <div style={{height: 10}} />
                     <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
                         <span style={{color: theme.white, marginRight: 10}}>이미 계정이 있으신가요?</span>

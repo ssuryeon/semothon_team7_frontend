@@ -14,12 +14,14 @@ const InputContainer = styled.input`
 
 interface IInput {
     placeholder:string,
-    style?: object
+    style?: object,
+    value?: string,
+    onChange?: any,
 }
 
-function Input({placeholder, style}:IInput) {
+function Input({placeholder, style, value, onChange}:IInput) {
     return (
-        <InputContainer placeholder={placeholder} style={style}/>
+        <InputContainer placeholder={placeholder} style={style} value={value} onChange={onChange}/>
     )
 }
 
