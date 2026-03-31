@@ -13,12 +13,13 @@ const InputContainer = styled.input`
 `;
 
 interface IInput {
-    placeholder:string
+    placeholder:string,
+    style?: object
 }
 
-function Input({placeholder}:IInput) {
+function Input({placeholder, style}:IInput) {
     return (
-        <InputContainer placeholder={placeholder}/>
+        <InputContainer placeholder={placeholder} style={style}/>
     )
 }
 
