@@ -1,3 +1,6 @@
+### public
+: 필요한 png 파일이 들어 있습니다, 프로젝트 내에서 '/파일명.png' 로 접근할 수 있습니다
+
 ### src/components 
 : 버튼, 인풋 등 컴포넌트 파일이 들어감 ex) Button.tsx, Input.tsx, Menu.tsx, ... (파일명에 stories가 붙는 파일들은 아닙니다)
 npm run storybook으로 파일별 컴포넌트들을 확인하실 수 있습니다
