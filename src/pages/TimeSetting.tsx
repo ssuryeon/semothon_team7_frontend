@@ -56,15 +56,22 @@ function TimeSetting(){
                 </div>
             </div>
             <Modal>
-                <Slider type='range' value={time} onChange={onChange} style={{background: `linear-gradient(
+                <img src='/ruler.png' style={{marginTop: 30, marginBottom: 0}}/>
+                <Slider type='range' value={time} onChange={onChange} max={720} style={{background: `linear-gradient(
                     to right,
                     ${theme.Yellow1} 0%,
-                    ${theme.Yellow2} ${time}%,
-                    #A09F9C ${time}%,
+                    ${theme.Yellow2} ${time*100/720}%,
+                    #A09F9C ${time*100/720}%,
                     #A09F9C 100%
-                )`, marginTop: 40}}/>
+                )`, marginTop: 25}}/>
+                <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', color: theme.GreyText, marginTop: 10}}>
+                    <span>18:00</span>
+                    <span>06:00</span>
+                </div>
                 <div style={{width: '100%', margin: 'auto'}}>
-                    <h2 style={{fontWeight: 700, fontSize: 32, marginBottom: 5, textAlign: 'center', marginTop: 0}}>00:30</h2>
+                    <h2 style={{fontWeight: 700, fontSize: 32, marginBottom: 5, textAlign: 'center', marginTop: 0}} id='time'>
+                        {(18 + Math.floor(time / 60)) >= 24 ? (18 + Math.floor(time / 60) - 24).toString().padStart(2, '0') : (18 + Math.floor(time / 60)).toString().padStart(2, '0')}:{(time % 60).toString().padStart(2, '0')}
+                    </h2>
                     <span style={{fontSize: 12, display: 'inline-block', width: '100%', textAlign: 'center'}}>목표 수면 시간 오전 12시 30분</span>
                 </div>
                 <span style={{color: theme.white, fontSize: 12, fontWeight: 400, display: 'inline-block', width: '100%', textAlign: 'center'}}>*목표 시간 30분 전에 PUSH 알리을 보내드립니다.</span>

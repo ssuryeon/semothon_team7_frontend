@@ -1,4 +1,5 @@
 import styled, {useTheme} from 'styled-components';
+import {useState} from 'react';
 
 const Modal = styled.div`
     background-color: ${props =>props.theme.ContentColor};
@@ -13,6 +14,16 @@ const Modal = styled.div`
 
 function AlarmSetting(){
     const theme = useTheme();
+    const [push, setPush] = useState(false);
+    const [mov, setMov] = useState(false);
+
+    const onPushClick = () => {
+        setPush(!push);
+    }
+    const onMovClick = () => {
+        setMov(!mov);
+    }
+
     return (
         <div style={{width: '100%', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'flex-start'}}>
             <div style={{flexDirection: 'column', justifyContent: 'flex-start', marginBottom: 16}}>
@@ -29,8 +40,8 @@ function AlarmSetting(){
                         <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700}}>푸쉬 알림</span>
                         <label style={{height: '100%', boxSizing: 'border-box', width: 55, display: 'inline-block'}}>
                             <input type='checkbox' style={{display: 'none'}}/>
-                            <div style={{width: 55, height: '100%', borderRadius: 999, backgroundColor: theme.GreyText, boxSizing: 'border-box', padding: 3}}>
-                                <div style={{height: '100%', aspectRatio: '1 / 1',backgroundColor: theme.white, borderRadius: '50%', cursor: 'pointer'}}/>
+                            <div style={{width: 55, height: '100%', borderRadius: 999, backgroundColor: push? theme.btnColor : theme.GreyText, boxSizing: 'border-box', padding: 3, position: 'relative'}}>
+                                <div style={{boxSizing: 'border-box', height: 'calc(100% - 6px)', aspectRatio: '1 / 1',backgroundColor: theme.white, borderRadius: '50%', cursor: 'pointer', position: 'absolute', transition: 'transform 0.3s', transform: push ? 'translateX(0%)' : 'translateX(100%)'}} onClick={onPushClick}/>
                             </div>
                         </label>
                     </div>
@@ -45,8 +56,8 @@ function AlarmSetting(){
                         <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700}}>동작 및 피트니스</span>
                         <label style={{height: '100%', boxSizing: 'border-box', width: 55, display: 'inline-block'}}>
                             <input type='checkbox' style={{display: 'none'}}/>
-                            <div style={{width: 55, height: '100%', borderRadius: 999, backgroundColor: theme.GreyText, boxSizing: 'border-box', padding: 3}}>
-                                <div style={{height: '100%', aspectRatio: '1 / 1',backgroundColor: theme.white, borderRadius: '50%', cursor: 'pointer'}}/>
+                            <div style={{width: 55, height: '100%', borderRadius: 999, backgroundColor: mov? theme.btnColor : theme.GreyText, boxSizing: 'border-box', padding: 3, position: 'relative'}}>
+                                <div style={{boxSizing: 'border-box', height: 'calc(100% - 6px)', aspectRatio: '1 / 1',backgroundColor: theme.white, borderRadius: '50%', cursor: 'pointer', position: 'absolute', transition: 'transform 0.3s', transform: mov ? 'translateX(0%)' : 'translateX(100%)'}} onClick={onMovClick}/>
                             </div>
                         </label>
                     </div>
