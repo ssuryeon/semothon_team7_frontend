@@ -31,7 +31,9 @@ function Onboarding(){
     const navigate = useNavigate();
     const location = useLocation();
     const token = userStore((state) => state.accessToken);
+    const setTime = userStore((state) => state.setTime);
     const [menu, setMenu] = useState(1);
+
     useEffect(() => {
         switch(location.pathname) {
             case '/onboarding':
@@ -68,6 +70,8 @@ function Onboarding(){
             case '/onboarding':
                 const time = document.getElementById('time')?.innerText;
                 console.log(`sleep time : ${time}`);
+                setTime(time as string);
+
                 const res = await setSleepTime(time as string, token);
                 console.log(`res : ${res}`);
                 if(res) navigate('/onboarding/alarm');

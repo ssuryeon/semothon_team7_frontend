@@ -6,9 +6,12 @@ type UserState = {
     email: string
     accessToken: string
     refreshToken: string
+    target_sleep_time: string
 
     signUp: (name: string, email: string, accessToken: string, refreshToken: string) => void
-    login: (email: string, accessToken: string) => void
+    login: (email: string, accessToken: string) => void,
+    setName: (name: string) => void,
+    setTime: (target_sleep_time:string) => void
 }
 
 export const userStore = create<UserState>()(
@@ -18,6 +21,7 @@ export const userStore = create<UserState>()(
             email: '',
             accessToken: '',
             refreshToken: '',
+            target_sleep_time: '',
 
             signUp: (name, email, accessToken, refreshToken) => {
                 set({
@@ -34,6 +38,18 @@ export const userStore = create<UserState>()(
                     accessToken,
                 })
             },
+
+            setName: (name:string) => {
+                set({
+                    name,
+                })
+            },
+
+            setTime: (target_sleep_time:string) => {
+                set({
+                    target_sleep_time,
+                })
+            }
         }),
         {
             name: 'user-storage',

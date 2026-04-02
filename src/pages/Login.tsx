@@ -6,6 +6,7 @@ import Button from '../components/Button.tsx';
 import {Container} from '../components/Container.tsx';
 import {Link} from 'react-router';
 import {login} from '../utils/auth.tsx';
+import { getMyInfo } from '../utils/modify_setting.tsx';
 import {useState} from 'react';
 import {userStore} from '../stores/UserStore.tsx';
 
@@ -14,6 +15,8 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const setUserinfo = userStore((state) => state.login);
+    const setName = userStore((state) => state.setName);
+
     const onClick = async () => {
         const res = await login(email, password);
         if(!res) {
@@ -26,7 +29,11 @@ function Login() {
             console.log(accessToken, refreshToken);
             console.log(userinfo);
             setUserinfo(userinfo.email as string, accessToken);
-            console.log(userStore((state) => state.email));
+            const res2 = await getMyInfo(accessToken);
+            if(res2) {
+                console.log(res2.data);
+                setName(res2.data.nickname);
+            }
         }
     }
 
