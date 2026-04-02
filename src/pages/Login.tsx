@@ -36,7 +36,7 @@ function Login() {
             <Container>
                 <div style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                     <LogoWhite />
-                    <Input placeholder='ID (Email Address)' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
+                    <Input placeholder='Email Address' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
                     <Input placeholder='Password' value={password} onChange={(e:any) => setPassword(e.currentTarget.value)}/>
                     <span style={{color: theme.white, fontSize: 10, textAlign: 'right'}}>비밀번호를 잊어버리셨나요?</span>
                 </div>

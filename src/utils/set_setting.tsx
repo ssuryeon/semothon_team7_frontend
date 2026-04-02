@@ -1,4 +1,3 @@
-import { groupStore } from "../stores/GroupStore";
 const BASE_URL='https://semothon-team7-backend.onrender.com';
 
 export async function setSleepTime(target_sleep_time:string, accessToken:string) {

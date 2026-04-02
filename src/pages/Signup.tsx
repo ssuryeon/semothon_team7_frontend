@@ -5,7 +5,7 @@ import LogoWhite from '../components/LogoWhite.tsx';
 import {Container} from '../components/Container.tsx';
 import Button from '../components/Button.tsx';
 import {useNavigate, Link} from 'react-router';
-import {signUp, login} from '../utils/auth.tsx';
+import {signUp, login, setNickname} from '../utils/auth.tsx';
 import {useState, useEffect} from 'react';
 import {userStore} from '../stores/UserStore.tsx';
 
@@ -25,25 +25,29 @@ function SignUp() {
     }, [])
     
     const onClick = async () => {
-        const res = await signUp(name, email, password);
-        if(!res) {
+        const signUp_res = await signUp(name, email, password);
+        if(!signUp_res) {
             alert('사용자 정보를 다시 입력해 주세요.');
         }
         else {
-            const res2 = await login(email as string, password);
-            if(!res2) {
-                alert('로그인 중 오류 발생');
-            }
+            const nickname_res = await setNickname(name, accessToken);
+            if(!nickname_res) alert('이름 설정 오류');
             else {
-                const accessToken = res2.accessToken;
-                const refreshToken = res2.refreshToken;
-                const e = res2.userinfo?.email;
-                const name = res2.userinfo?.user_metadata.name;
-                console.log(accessToken, refreshToken);
-                console.log(res.userinfo);
-                setUserinfo(name, e as string, accessToken as string, refreshToken as string)
-                console.log(`state : ${nameState}`)
-                navigate('/onboarding')
+                const login_res = await login(email as string, password);
+                if(!login_res) {
+                    alert('로그인 중 오류 발생');
+                }
+                else {
+                    const accessToken = login_res.accessToken;
+                    const refreshToken = login_res.refreshToken;
+                    const e = login_res.userinfo?.email;
+                    const name = login_res.userinfo?.user_metadata.name;
+                    console.log(accessToken, refreshToken);
+                    console.log(login_res.userinfo);
+                    setUserinfo(name, e as string, accessToken as string, refreshToken as string)
+                    console.log(`state : ${nameState}`)
+                    navigate('/onboarding')
+                }
             }
         }
     }
@@ -55,7 +59,7 @@ function SignUp() {
                 <div style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                     <LogoWhite />
                     <Input placeholder='Name' value={name} onChange={(e:any) => setName(e.currentTarget.value)}/>
-                    <Input placeholder='ID (Email Address)' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
+                    <Input placeholder='Email Address' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
                     <Input placeholder='Password' value={password} onChange={(e:any) => setPassword(e.currentTarget.value)}/>
                 </div>
                 <div style={{width: '100%'}}>

@@ -4,7 +4,7 @@ import {HeaderContainer} from '../components/Header';
 import LogoBlack from '../components/LogoBlack';
 import { IoIosArrowBack } from "react-icons/io";
 import {Outlet, useLocation, useNavigate} from'react-router';
-import {setSleepTime} from '../utils/setting';
+import {setSleepTime} from '../utils/set_setting';
 import {userStore} from '../stores/UserStore';
 import {useEffect, useState} from 'react';
 
@@ -89,7 +89,7 @@ function Onboarding(){
             </HeaderContainer>
             <Container >
                 <Outlet />
-                <div style={{width: '100%', marginTop: 20}}>
+                <div style={{width: '100%', marginTop: 20, boxSizing: 'border-box'}}>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 20}} id='bar'>
                         <Circle style={{backgroundColor: menu == 1 ? theme.white : theme.ContentColor}}/>
                         <Circle style={{backgroundColor: menu == 2 ? theme.white : theme.ContentColor}}/>

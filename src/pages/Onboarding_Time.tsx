@@ -13,6 +13,7 @@ const Modal = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 `;
 
 const Slider = styled.input`
@@ -35,7 +36,7 @@ const Slider = styled.input`
 `;
 
 
-function TimeSetting(){
+function Onboarding_Time(){
     const theme = useTheme();
     const [time, setTime] = useState(0);
     const onChange = (e:any) => {
@@ -72,7 +73,7 @@ function TimeSetting(){
                     <h2 style={{fontWeight: 700, fontSize: 32, marginBottom: 5, textAlign: 'center', marginTop: 0}} id='time'>
                         {(18 + Math.floor(time / 60)) >= 24 ? (18 + Math.floor(time / 60) - 24).toString().padStart(2, '0') : (18 + Math.floor(time / 60)).toString().padStart(2, '0')}:{(time % 60).toString().padStart(2, '0')}
                     </h2>
-                    <span style={{fontSize: 12, display: 'inline-block', width: '100%', textAlign: 'center'}}>목표 수면 시간 오전 12시 30분</span>
+                    <span style={{fontSize: 12, display: 'inline-block', width: '100%', textAlign: 'center'}}>목표 수면 시간 오전 {(18 + Math.floor(time / 60)) >= 24 ? (18 + Math.floor(time / 60) - 24).toString().padStart(2, '0') : (18 + Math.floor(time / 60)).toString().padStart(2, '0')}시 {(time % 60).toString().padStart(2, '0')}분</span>
                 </div>
                 <span style={{color: theme.white, fontSize: 12, fontWeight: 400, display: 'inline-block', width: '100%', textAlign: 'center'}}>*목표 시간 30분 전에 PUSH 알리을 보내드립니다.</span>
             </Modal>
@@ -80,4 +81,4 @@ function TimeSetting(){
     )
 }
 
-export default TimeSetting;
+export default Onboarding_Time;

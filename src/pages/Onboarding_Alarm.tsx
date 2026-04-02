@@ -12,7 +12,7 @@ const Modal = styled.div`
 `;
 
 
-function AlarmSetting(){
+function Onboarding_Alarm(){
     const theme = useTheme();
     const [push, setPush] = useState(false);
     const [mov, setMov] = useState(false);
@@ -71,4 +71,4 @@ function AlarmSetting(){
     )
 }
 
-export default AlarmSetting;
+export default Onboarding_Alarm;

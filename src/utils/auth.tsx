@@ -46,10 +46,14 @@ export async function login(email:string, password:string) {
     return {accessToken, refreshToken, userinfo}
 }
 
-export async function setNickname(nickname:string) {
+export async function setNickname(nickname:string, accessToken:string) {
     console.log(`[setNickname start] nickname : ${nickname}`);
     const res = await (await fetch(`${BASE_URL}/api/users/nickname`, {
-        method: 'POST',
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: JSON.stringify({
             nickname,
         })
