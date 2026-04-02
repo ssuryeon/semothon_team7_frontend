@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
@@ -15,8 +15,34 @@ interface FeedMember {
 }
 
 // ─────────────────────────────────────────────
-// Design Tokens
+// API 데이터 타입
 // ─────────────────────────────────────────────
+interface HomeData {
+  targetTime: string; // 백엔드에서 "HH:MM" 형식으로 수신 (예: "00:30")
+}
+
+// ─────────────────────────────────────────────
+// 시간 변환 유틸
+// ─────────────────────────────────────────────
+/**
+ * "HH:MM" 문자열을 한국어 오전/오후 형식으로 변환
+ *
+ * 예시:
+ *   "00:30" → "오전 12:30"
+ *   "13:05" → "오후 1:05"
+ *   "12:00" → "오후 12:00"
+ */
+function formatKoreanTime(hhmm: string): string {
+  const [hourStr, minute] = hhmm.split(':');
+  const hour = parseInt(hourStr, 10);
+
+  const period  = hour < 12 ? '오전' : '오후';
+  const hour12  = hour % 12 === 0 ? 12 : hour % 12;
+
+  return `${period} ${hour12}:${minute}`;
+}
+
+
 const T = {
   // Glass card — light mode
   cardBg:     'rgba(255, 255, 255, 0.58)',
@@ -547,11 +573,37 @@ const SleepBtn = styled.button`
 // ─────────────────────────────────────────────
 export default function LoungeHome() {
   /* ── stores ── */
-  // TODO: targetTime은 현재 로컬 상태로 임시 하드코딩.
-  //       userStore 또는 sleepSettingStore에 targetTime이 추가되면 아래 줄을 제거하고
-  //       const { name: userName, targetTime } = userStore(); 형태로 교체할 것.
   const { name: userName } = userStore();
-  const [targetTime] = useState('12:30');
+
+  /*
+   * ── 취침 목표 시간 상태 ──
+   * rawTargetTime : 백엔드에서 받은 "HH:MM" 원본 문자열
+   * displayTime   : 화면에 표시할 "오전/오후 H:MM" 변환 값
+   */
+  const [rawTargetTime, setRawTargetTime] = useState<string>('00:30');
+  const displayTime = formatKoreanTime(rawTargetTime);
+
+  useEffect(() => {
+    // ── Mock 데이터 페칭 (로그인 연동 전 임시) ──────────────────────────
+    // TODO: 로그인 연동 완료 후 아래 mock 블록을 제거하고
+    //       실제 API 호출로 교체:
+    //
+    //   import { fetchHomeData } from '../api/home';
+    //
+    //   fetchHomeData()
+    //     .then((data) => setRawTargetTime(data.targetTime))
+    //     .catch((err) => console.error('홈 데이터 로딩 실패:', err));
+    // ────────────────────────────────────────────────────────────────────
+
+    const mockData: HomeData = {
+      targetTime: '00:30', // 백엔드 응답 형식: "HH:MM"
+    };
+
+    // 실제 API와 동일한 비동기 흐름으로 처리
+    Promise.resolve(mockData).then((data) => {
+      setRawTargetTime(data.targetTime);
+    });
+  }, []);
 
   /* ── 수면 모드 상태 ── */
   // false: 기상/라이트 모드, true: 수면/다크 모드
@@ -561,7 +613,7 @@ export default function LoungeHome() {
   const { feedList, totalMembers, sleepingMembers } = useSleepFeed();
 
   /* ── computed ── */
-  const remainingText = getRemainingTimeText(targetTime);
+  const remainingText = getRemainingTimeText(rawTargetTime);
   const achieveRate   = totalMembers > 0
     ? Math.round((sleepingMembers / totalMembers) * 100)
     : 0;
@@ -654,7 +706,7 @@ export default function LoungeHome() {
 
           <StatusHalf $end>
             <CardLabel $isSleepMode={isSleepMode}>취침 목표 시간</CardLabel>
-            <TargetTime $isSleepMode={isSleepMode}>오전 {targetTime}</TargetTime>
+            <TargetTime $isSleepMode={isSleepMode}>{displayTime}</TargetTime>
             <RemainingHint $isSleepMode={isSleepMode}>{remainingText}</RemainingHint>
           </StatusHalf>
         </StatusCard>
