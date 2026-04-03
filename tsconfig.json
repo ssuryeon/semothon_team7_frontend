@@ -4,5 +4,8 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "include": ["src"]
+  "include": ["src"],
+  "compilerOptions": {
+    "declaration": false,
+  }
 }
