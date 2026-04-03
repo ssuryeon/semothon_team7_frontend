@@ -4,7 +4,8 @@ import Input from '../components/Input';
 import {useState} from 'react';
 import {userStore} from '../stores/UserStore';
 import { groupStore } from '../stores/GroupStore';
-import {createGroup, joinGroup} from '../utils/setting';
+import {createGroup, joinGroup} from '../utils/set_setting';
+import { IoIosSearch } from "react-icons/io";
 
 const Modal = styled.div`
     background-color: ${props =>props.theme.ContentColor};
@@ -23,7 +24,7 @@ const ScrollContainer = styled.div`
 `;
 
 
-function GroupSetting(){
+function Onboarding_Group(){
     const theme = useTheme();
     const [groupName, setGroupName] = useState('');
     const [maxNum, setMaxNum] = useState('');
@@ -91,6 +92,10 @@ function GroupSetting(){
                             <Modal>
                                 <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700, marginBottom: 10, display:'inline-block'}}>그룹 가입하기</span>
                                 <Input placeholder='초대 코드 입력' style={{backgroundColor: theme.white, marginBottom: 10}} value={inviteCode} onChange={(e:any) => setInviteCode(e.currentTarget.value)}/>
+                                <div style={{width: '100%', position: 'relative', marginBottom: 10, boxSizing: 'border-box'}}>
+                                    <Input placeholder='그룹명으로 찾기' style={{backgroundColor: theme.white, marginBottom: 0}} value={inviteCode} />
+                                    <IoIosSearch style={{position: 'absolute', right: 15, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer'}} size={16.5} color={theme.GreyText}/>
+                                </div>
                                 <Button text='가입' onClick={onJoinClick}/>
                             </Modal>
                         </ScrollContainer>
@@ -101,4 +106,4 @@ function GroupSetting(){
     )
 }
 
-export default GroupSetting;
+export default Onboarding_Group;

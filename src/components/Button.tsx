@@ -16,11 +16,12 @@ const ButtonContainer = styled.button`
 interface IButton {
     text:string,
     onClick?: any,
+    style?: object,
 }
 
-function Button({text, onClick}:IButton) {
+function Button({text, onClick, style}:IButton) {
     return (
-        <ButtonContainer onClick={onClick}>{text}</ButtonContainer>
+        <ButtonContainer onClick={onClick} style={style}>{text}</ButtonContainer>
     )
 }
 

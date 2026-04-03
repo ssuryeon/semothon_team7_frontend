@@ -3,9 +3,11 @@ import Home from './pages/Home'
 import SignUp from './pages/Signup';
 import Login from './pages/Login';
 import Onboarding from './pages/Onboarding';
-import TimeSetting from './pages/TimeSetting';
-import AlarmSetting from './pages/AlarmSetting';
-import GroupSetting from './pages/GroupSetting';
+import Onboarding_Time from './pages/Onboarding_Time';
+import Onboarding_Alarm from './pages/Onboarding_Alarm';
+import Onboarding_Group from './pages/Onboarding_Group';
+import Setting_Time from './pages/Setting_Time';
+import Setting_Nickname from './pages/Setting_Nickname';
 import LoungeHome from './pages/LoungeHome'; // 👈 1. 우리가 만든 라운지 화면 불러오기!
 import {createBrowserRouter, RouterProvider} from 'react-router';
 
@@ -32,18 +34,26 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: TimeSetting,
+        Component: Onboarding_Time,
       },
       {
         path: 'alarm',
-        Component: AlarmSetting,
+        Component: Onboarding_Alarm,
       },
       {
         path: 'group',
-        Component: GroupSetting,
+        Component: Onboarding_Group,
       }
     ]
-  }
+  },
+  {
+    path: '/setting/time',
+    Component: Setting_Time
+  },
+  {
+    path: '/setting/nickname',
+    Component: Setting_Nickname,
+  },
 ])
 
 function App() {

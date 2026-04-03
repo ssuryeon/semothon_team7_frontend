@@ -6,6 +6,7 @@ import Button from '../components/Button.tsx';
 import {Container} from '../components/Container.tsx';
 import {Link, useNavigate} from 'react-router';
 import {login} from '../utils/auth.tsx';
+import { getMyInfo } from '../utils/modify_setting.tsx';
 import {useState} from 'react';
 import {userStore} from '../stores/UserStore.tsx';
 
@@ -15,6 +16,8 @@ function Login() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const setUserinfo = userStore((state) => state.login);
+    const setName = userStore((state) => state.setName);
+
     const onClick = async () => {
         const res = await login(email, password);
         if(!res) {
@@ -27,6 +30,11 @@ function Login() {
             console.log(accessToken, refreshToken);
             console.log(userinfo);
             setUserinfo(userinfo.email as string, accessToken);
+            const res2 = await getMyInfo(accessToken);
+            if(res2) {
+                console.log(res2.data);
+                setName(res2.data.nickname);
+            }
             navigate('/lounge');
         }
     }
@@ -37,7 +45,7 @@ function Login() {
             <Container>
                 <div style={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                     <LogoWhite />
-                    <Input placeholder='ID (Email Address)' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
+                    <Input placeholder='Email Address' value={email} onChange={(e:any) => setEmail(e.currentTarget.value)}/>
                     <Input placeholder='Password' value={password} onChange={(e:any) => setPassword(e.currentTarget.value)}/>
                     <span style={{color: theme.white, fontSize: 10, textAlign: 'right'}}>비밀번호를 잊어버리셨나요?</span>
                 </div>
