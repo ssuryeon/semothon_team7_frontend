@@ -30,6 +30,7 @@ function Setting_Group_CreateOrJoin(){
     const [inviteCode, setInviteCode] = useState('');
     const [groupComplete, setGroupComplete] = useState(false);
     const accessToken = userStore((state) => state.accessToken);
+    const [_code, setCode] = useState('');
 
     const setGroup = groupStore((state) => state.setGroup);
     const setComplete = userStore((state) => state.setGroupComplete);
@@ -46,6 +47,7 @@ function Setting_Group_CreateOrJoin(){
             alert('그룹 생성 완료');
             setInfo(res.id, res.code);
             console.log(`state: ${id}, ${code}`)
+            setCode(code);
             setGroupComplete(true);
             setComplete();
         }
@@ -72,6 +74,7 @@ function Setting_Group_CreateOrJoin(){
                     <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <img src='/checkIcon.png'  style={{marginBottom: 8}}/>
                         <span style={{color: theme.white, fontSize: 12, fontWeight: 400}}>그룹을 성공적으로 생성했습니다.</span>
+                        <span style={{color: theme.white, fontSize: 12, fontWeight: 400}}>그룹 코드는 {_code}입니다.</span>
                     </div>
                 ) : 
                 (

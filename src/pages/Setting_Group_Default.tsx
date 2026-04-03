@@ -2,6 +2,16 @@ import {useTheme} from 'styled-components';
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import {Modal} from '../components/Modal';
 import Button from '../components/Button';
+import { getGroups } from '../utils/set_setting';
+import {useState, useEffect} from 'react';
+import { userStore } from '../stores/UserStore';
+
+type Group = {
+    group_id: string,
+    group_name: string,
+    invite_code: string,
+    joined_at: string
+}
 
 interface IGroupName {
     name: string,
@@ -33,14 +43,29 @@ function GroupCodeContainer({code}:IGroupCode) {
 
 function Setting_Group_Default() {
     const theme = useTheme();
+    const accessToken = userStore((state) => state.accessToken);
+    const [groups, setGroups] = useState<Group[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getGroups(accessToken);
+            console.log(data);
+            setGroups([...data]);
+        }
+        fetchData();
+    }, [])
 
     return (
         <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
             <HiOutlineUserGroup size={30} color={theme.GreyText} style={{marginBottom: 54}}/>
             <Modal style={{backgroundColor: 'rgba(255, 255, 255, 0.6)'}}>
                 <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700, marginBottom: 24}}>현재 내가 소속된 그룹</span>
-                <GroupNameContainer name='그룹명1' />
-                <GroupCodeContainer code='그룹 코드'/>
+                {groups.map(group => (
+                    <div>
+                        <GroupNameContainer name={group.group_name} />
+                        <GroupCodeContainer code={group.invite_code}/>
+                    </div>
+                ))}
                 <Button text='추가' style={{backgroundColor: 'rgba(42, 50, 71, 0.8)', marginTop: 8}}/>
             </Modal>
         </div>

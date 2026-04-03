@@ -928,7 +928,7 @@ export default function LoungeHome() {
           <MenuDivider $isSleepMode={isSleepMode} />
           <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuSettingsItem $isSleepMode={isSleepMode}>👥 그룹 설정</MenuSettingsItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/group')}>👥 그룹 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
           <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
