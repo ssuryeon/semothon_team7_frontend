@@ -24,17 +24,19 @@ export function getRemainingTimeText(targetTime: string | null): string {
 
   const diffMin = Math.round(diffMs / (1000 * 60));
 
-  const formatDuration = (absMin: number): string => {
-    if (absMin < 60) return `${absMin}분`;
+  if (diffMin > 0) {
+    const hours = Math.floor(diffMin / 60);
+    const mins = diffMin % 60;
+    if (hours > 0 && mins > 0) return `목표까지 ${hours}시간 ${mins}분 전`;
+    if (hours > 0 && mins === 0) return `목표까지 ${hours}시간 전`;
+    return `목표까지 ${mins}분 전`;
+  } else if (diffMin < 0) {
+    const absMin = Math.abs(diffMin);
     const hours = Math.floor(absMin / 60);
     const mins = absMin % 60;
-    return mins === 0 ? `${hours}시간` : `${hours}시간 ${mins}분`;
-  };
-
-  if (diffMin > 0) {
-    return `목표까지 ${formatDuration(diffMin)} 전`;
-  } else if (diffMin < 0) {
-    return `목표 시간 ${formatDuration(Math.abs(diffMin))} 경과`;
+    if (hours > 0 && mins > 0) return `목표 시간 ${hours}시간 ${mins}분 경과`;
+    if (hours > 0 && mins === 0) return `목표 시간 ${hours}시간 경과`;
+    return `목표 시간 ${mins}분 경과`;
   } else {
     return "지금이 바로 목표 시간입니다!";
   }
