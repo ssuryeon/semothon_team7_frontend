@@ -1,12 +1,13 @@
 // src/pages/LoungeHome.tsx
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
 import MoonPhase from '../components/MoonPhase';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
-import { fetchHomeData, fetchFeedData } from '../utils/api';
+import { fetchHomeData, fetchFeedData, sendPoke, fetchPokeNotification } from '../utils/api';
+import PokeOverlay from '../components/PokeOverlay';
 import { useNavigate } from 'react-router';
 
 // ─────────────────────────────────────────────
@@ -617,6 +618,30 @@ export default function LoungeHome() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // ── 찌르기 오버레이 상태
+  const [pokeMessage, setPokeMessage] = useState<string | null>(null);
+  const [pokeExiting, setPokeExiting] = useState(false);
+  const pokeTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  /** 찌르기 배너를 표시하고 2.5초 후 fadeOut, 2.85초 후 제거 */
+  const showPokeBanner = (msg: string) => {
+    pokeTimersRef.current.forEach(clearTimeout);
+    pokeTimersRef.current = [];
+    setPokeMessage(msg);
+    setPokeExiting(false);
+    const t1 = setTimeout(() => setPokeExiting(true), 2500);
+    const t2 = setTimeout(() => {
+      setPokeMessage(null);
+      setPokeExiting(false);
+    }, 2850);
+    pokeTimersRef.current = [t1, t2];
+  };
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => { pokeTimersRef.current.forEach(clearTimeout); };
+  }, []);
+
   // ── ✅ [수정] API 호출: nickname + target_time + current_status 모두 반영
   useEffect(() => {
     const loadData = async () => {
@@ -677,6 +702,21 @@ export default function LoungeHome() {
     setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
   }, [feedList]);
 
+  // ── 찌르기 수신 폴링 (5초 간격)
+  // TODO: 백엔드에서 GET /api/poke/notification 구현 후 활성화됩니다
+  useEffect(() => {
+    const poll = async () => {
+      const result = await fetchPokeNotification();
+      if (result?.fromNickname) {
+        showPokeBanner(`${result.fromNickname}님이 콕 찔렀어요.`);
+      }
+    };
+    const intervalId = setInterval(poll, 5000);
+    return () => clearInterval(intervalId);
+  // showPokeBanner는 render마다 재생성되지 않도록 deps에서 제외
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── computed (기존 유지)
   //    getRemainingTimeText(null) 은 timeUtils에서 "목표 시간을 설정해 주세요" 반환 필요
   //    → 아래에서 null 케이스를 안전하게 처리
@@ -693,6 +733,12 @@ export default function LoungeHome() {
 
   // ── ✅ [수정] 표시할 닉네임 우선순위: API > userStore > '사용자'
   const displayName = apiNickname || userName || '사용자';
+
+  const handlePoke = async (target: FeedMember) => {
+    showPokeBanner(`${target.nickname}님을 콕 찔렀습니다.`);
+    // TODO: 백엔드 POST /api/poke 구현 후 실제 전송됩니다
+    await sendPoke(target.id);
+  };
 
   const handleSleepStart = async () => {
     const newSleepMode = !isSleepMode;
@@ -826,7 +872,11 @@ export default function LoungeHome() {
                         {meta.label}
                       </FeedStatusText>
                     </FeedInfo>
-                    <PokeBtn aria-label={`${m.nickname}님 콕 찌르기`} type="button">
+                    <PokeBtn
+                      aria-label={`${m.nickname}님 콕 찌르기`}
+                      type="button"
+                      onClick={() => handlePoke(m)}
+                    >
                       <img src="/hand.png" alt="콕 찌르기" />
                     </PokeBtn>
                   </FeedItem>
@@ -849,6 +899,11 @@ export default function LoungeHome() {
           {isSleepMode ? '🌅 기상하기' : '🌙 수면 시작'}
         </SleepBtnStyled>
       </FloatArea>
+
+      {/* 찌르기 오버레이: 찌른 경우 "OO님을 콕 찔렀습니다." / 찔린 경우 "OO님이 콕 찔렀어요." */}
+      {pokeMessage && (
+        <PokeOverlay message={pokeMessage} exiting={pokeExiting} />
+      )}
 
       <MenuOverlay $isOpen={isMenuOpen} onClick={() => setIsMenuOpen(false)} />
       <MenuPanel $isOpen={isMenuOpen} $isSleepMode={isSleepMode}>
