@@ -9,6 +9,7 @@ import Onboarding_Group from './pages/Onboarding_Group';
 import Setting_Time from './pages/Setting_Time';
 import Setting_Nickname from './pages/Setting_Nickname';
 import LoungeHome from './pages/LoungeHome'; // 👈 1. 우리가 만든 라운지 화면 불러오기!
+import Setting_Alarm from './pages/Setting_Alarm';
 import {createBrowserRouter, RouterProvider} from 'react-router';
 
 const router = createBrowserRouter([
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
     path: '/setting/nickname',
     Component: Setting_Nickname,
   },
+  {
+    path: '/setting/alarm',
+    Component: Setting_Alarm,
+  }
 ])
 
 function App() {

@@ -958,7 +958,7 @@ export default function LoungeHome() {
           <SettingsDivider $isSleepMode={isSleepMode} />
           <SettingsMenuItem $isSleepMode={isSleepMode}>👥 그룹 설정</SettingsMenuItem>
           <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode}>🔔 알림 설정</SettingsMenuItem>
+          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</SettingsMenuItem>
           <SettingsDivider $isSleepMode={isSleepMode} />
         </SettingsMenuList>
       </SettingsPanel>
