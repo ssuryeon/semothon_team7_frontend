@@ -1,6 +1,7 @@
 // src/pages/LoungeHome.tsx
 
 import { useState, useEffect } from 'react';
+import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
@@ -718,33 +719,8 @@ export default function LoungeHome() {
     loadData();
   }, []);
 
-  // ── 폰 뒤집기 감지 (Android 및 기타 기기)
-  useEffect(() => {
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      // beta: 앞뒤 기울기 (-180 ~ 180)
-      // gamma: 좌우 기울기 (-90 ~ 90)
-      // 폰이 뒤집힌 상태 = beta가 -90도 이하이거나 gamma의 절댓값이 90에 가까울 때
-      if (e.beta !== null && Math.abs(e.beta) > 150) {
-        setIsSleepMode(true);
-      }
-    };
-
-    // iOS 13+ 권한 요청 필요
-    if (
-      typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
-    ) {
-      // iOS: 버튼 클릭 등 사용자 인터랙션 후에만 권한 요청 가능
-      // → 수면 시작 버튼 클릭 시 권한 요청하도록 handleSleepStart에 추가
-    } else {
-      // Android 및 기타: 바로 이벤트 등록
-      window.addEventListener('deviceorientation', handleOrientation);
-    }
-
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
-    };
-  }, []);
+  // ── 폰 뒤집기 감지: isSleepMode일 때만 활성화
+  const { isFaceDown } = useFaceDownDetector(isSleepMode);
 
   // ── feedList 변경 시 통계 동기화
   useEffect(() => {
@@ -771,26 +747,20 @@ export default function LoungeHome() {
   const displayName = apiNickname || userName || '사용자';
 
   const handleSleepStart = async () => {
-    // iOS 13+ 권한 요청
+    const newSleepMode = !isSleepMode;
+
+    // iOS 13+: 수면 시작 시 방향 센서 권한 요청 (사용자 제스처 내에서 호출해야 함)
     if (
+      newSleepMode &&
       typeof DeviceOrientationEvent !== 'undefined' &&
       typeof (DeviceOrientationEvent as any).requestPermission === 'function'
     ) {
       try {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
-        if (permission === 'granted') {
-          window.addEventListener('deviceorientation', (e: DeviceOrientationEvent) => {
-            if (e.beta !== null && Math.abs(e.beta) > 150) {
-              setIsSleepMode(true);
-            }
-          });
-        }
+        await (DeviceOrientationEvent as any).requestPermission();
       } catch (err) {
         console.error('방향 센서 권한 요청 실패:', err);
       }
     }
-
-    const newSleepMode = !isSleepMode;
     setIsSleepMode(newSleepMode);
 
     // feedList에서 현재 사용자의 status도 함께 업데이트 → sleepingMembers / achieveRate 반영
@@ -813,6 +783,18 @@ export default function LoungeHome() {
     console.log(newSleepMode ? '수면 시작!' : '기상!');
   };
   const navigate = useNavigate();
+
+  // 수면 모드 + 폰 뒤집힌 상태 → 완전 검정 화면
+  if (isSleepMode && isFaceDown) {
+    return (
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#000000',
+        zIndex: 9999,
+      }} />
+    );
+  }
 
   return (
     <PageRoot $isSleepMode={isSleepMode}>
