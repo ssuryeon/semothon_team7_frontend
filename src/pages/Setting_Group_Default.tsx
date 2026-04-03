@@ -33,10 +33,19 @@ interface IGroupCode {
 
 function GroupCodeContainer({code}:IGroupCode) {
     const theme = useTheme();
+    const onClick = () => {
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('코드가 복사되었습니다!'); // 복사 완료 안내
+            })
+            .catch(() => {
+                alert('복사 실패!'); // 오류 처리
+            });
+    }
     return (
         <div style={{width: '100%', backgroundColor: theme.white, borderRadius: 15, border: '1px solid rgba(42, 50, 71, 0.3)', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', boxSizing: 'border-box', padding: '11px 14px', marginBottom: 16}}>
                 <span style={{color: theme.GreyText, fontSize: 16, display: 'flex', alignItems: 'center'}}>{code}</span>
-                <button style={{border: theme.GreyText, backgroundColor: 'rgba(42, 50, 71, 0.4)', borderRadius: 18.5, padding: '5px 19px', color: theme.white, fontSize: 14, fontWeight: 700, cursor: 'pointer'}}>복제</button>
+                <button style={{border: theme.GreyText, backgroundColor: 'rgba(42, 50, 71, 0.4)', borderRadius: 18.5, padding: '5px 19px', color: theme.white, fontSize: 14, fontWeight: 700, cursor: 'pointer'}} onClick={onClick}>복제</button>
         </div>
     )
 }
