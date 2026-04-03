@@ -17,7 +17,6 @@ function SignUp() {
     const [password, setPassword] = useState('');
     const setUserinfo = userStore((state) => state.signUp);
     const nameState = userStore((state) => state.name);
-    const accessToken = userStore((state) => state.accessToken);
     
     const onClick = async () => {
         const signUp_res = await signUp(name, email, password);
@@ -25,7 +24,7 @@ function SignUp() {
             alert('사용자 정보를 다시 입력해 주세요.');
         }
         else {
-            const nickname_res = await setNickname(name, accessToken);
+            const nickname_res = await setNickname(name, signUp_res.accessToken as string);
             if(!nickname_res) alert('이름 설정 오류');
             else {
                 const login_res = await login(email as string, password);

@@ -614,6 +614,10 @@ export default function LoungeHome() {
   const [isSleepMode, setIsSleepMode] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
+  // useEffect deps 없이 최신 isSleepMode 값을 폴링 콜백에서 읽기 위한 ref
+  const isSleepModeRef = useRef(isSleepMode);
+  isSleepModeRef.current = isSleepMode;
+
   // ── 통계 별도 state (기상 버튼 클릭 시 즉시 반영)
   const [sleepingMembers, setSleepingMembers] = useState(0);
   const [achieveRate, setAchieveRate] = useState(0);
@@ -710,13 +714,13 @@ export default function LoungeHome() {
   useEffect(() => {
     const poll = async () => {
       const result = await fetchPokeNotification();
-      if (result?.fromNickname) {
+      if (result?.fromNickname && !isSleepModeRef.current) {
         showPokeBanner(`${result.fromNickname}님이 콕 찔렀어요.`);
       }
     };
     const intervalId = setInterval(poll, 5000);
     return () => clearInterval(intervalId);
-  // showPokeBanner는 render마다 재생성되지 않도록 deps에서 제외
+  // showPokeBanner, isSleepModeRef는 render마다 재생성되지 않도록 deps에서 제외
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -762,6 +766,10 @@ export default function LoungeHome() {
   const displayName = apiNickname || userName || '사용자';
 
   const handlePoke = async (target: FeedMember) => {
+    if (target.status === 'sleeping') {
+      showPokeBanner('수면 중인 사람은 찌를 수 없습니다.');
+      return;
+    }
     showPokeBanner(`${target.nickname}님을 콕 찔렀습니다.`);
     // TODO: 백엔드 POST /api/poke 구현 후 실제 전송됩니다
     await sendPoke(target.id);
