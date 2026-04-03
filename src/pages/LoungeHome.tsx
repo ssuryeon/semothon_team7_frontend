@@ -646,6 +646,7 @@ const SleepBtnStyled = styled.button<{ $isSleepMode: boolean }>`
 // ─────────────────────────────────────────────
 export default function LoungeHome() {
   const { name: userName } = userStore();
+  const accessToken = userStore((state) => state.accessToken);
 
   // ── ✅ [추가] API에서 받은 닉네임 상태
   const [apiNickname, setApiNickname] = useState<string | null>(null);
@@ -670,6 +671,7 @@ export default function LoungeHome() {
 
   // ── ✅ [수정] API 호출: nickname + target_time + current_status 모두 반영
   useEffect(() => {
+    if(!accessToken || accessToken == '') navigate('/');
     const loadData = async () => {
       try {
         const response = await fetchHomeData();
