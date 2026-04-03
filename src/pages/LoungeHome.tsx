@@ -5,7 +5,7 @@ import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
-import { fetchHomeData } from '../utils/api';
+import { fetchHomeData, fetchFeedData } from '../utils/api';
 import { useNavigate } from 'react-router';
 
 // ─────────────────────────────────────────────
@@ -690,23 +690,19 @@ export default function LoungeHome() {
           // current_status가 'sleeping'이면 수면 모드로 초기화
           setIsSleepMode(current_status === 'sleeping');
 
-          // ── 그룹 멤버 피드 반영: 가능한 키명을 순서대로 시도
-          const members =
-            data.group_members ??
-            data.members ??
-            data.groupMembers ??
-            null;
+          // ── 그룹 멤버 피드 반영: /api/feed 엔드포인트에서 별도 조회
+          const feedResponse = await fetchFeedData();
+          const feedData = feedResponse?.data ?? null;
 
-          if (Array.isArray(members) && members.length > 0) {
-            setFeedList(members as FeedMember[]);
+          if (Array.isArray(feedData) && feedData.length > 0) {
+            const members: FeedMember[] = feedData.map((m: { user_id: string; nickname: string; status: string }) => ({
+              id: m.user_id,
+              nickname: m.nickname,
+              status: m.status as SleepStatus,
+            }));
+            setFeedList(members);
           } else {
-            // fallback: 멤버 데이터가 없거나 비어있으면 본인 1명으로 구성
-            const selfEntry: FeedMember = {
-              id: 'self',
-              nickname: nickname ?? userName ?? '사용자',
-              status: (current_status as SleepStatus) ?? 'before_sleep',
-            };
-            setFeedList([selfEntry]);
+            setFeedList([]);
           }
         }
       } catch (err) {
