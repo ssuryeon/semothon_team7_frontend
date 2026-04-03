@@ -1,10 +1,13 @@
 // src/pages/LoungeHome.tsx
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
-import { fetchHomeData } from '../utils/api';
+import { fetchHomeData, fetchFeedData, sendPoke, fetchPokeNotification } from '../utils/api';
+import PokeOverlay from '../components/PokeOverlay';
+import Report from './Report';
 import { useNavigate } from 'react-router';
 
 // ─────────────────────────────────────────────
@@ -103,7 +106,7 @@ const Header = styled.header`
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 16px 20px 12px;
 `;
 
@@ -124,6 +127,9 @@ const IconBtn = styled.button`
 `;
 
 const LogoImg = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   height: 22px;
   width: auto;
   object-fit: contain;
@@ -487,91 +493,22 @@ const MenuDivider = styled.hr<{ $isSleepMode: boolean }>`
   transition: border-color 0.6s ease;
 `;
 
-const MenuList = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px;
-`;
 
-const MenuItem = styled.button<{ $isSleepMode: boolean }>`
-  background: none;
-  border: none;
-  text-align: left;
-  font-size: 0.95rem;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
-  padding: 18px 0;
-  cursor: pointer;
-  font-weight: 500;
-  transition: color 0.6s ease;
-  &:hover {
-    background: ${({ $isSleepMode }) =>
-      $isSleepMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'};
-  }
-`;
-
-const SettingsOverlay = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 40;
-`;
-
-const SettingsPanel = styled.div<{ $isOpen: boolean; $isSleepMode: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 75%;
-  max-width: 320px;
-  z-index: 50;
-  background: ${({ $isSleepMode }) => ($isSleepMode ? '#1A1A2E' : 'white')};
-  display: flex;
-  flex-direction: column;
-  transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
-  transition: transform 0.3s ease, background 0.6s ease;
-`;
-
-const SettingsHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 52px 20px 16px;
-`;
-
-const SettingsTitle = styled.h2<{ $isSleepMode: boolean }>`
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
-  margin: 0;
-  transition: color 0.6s ease;
-`;
-
-const SettingsCloseBtn = styled.button<{ $isSleepMode: boolean }>`
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? 'rgba(255,255,255,0.6)' : '#6B7280')};
-  padding: 4px;
-  transition: color 0.6s ease;
-`;
-
-const SettingsProfile = styled.div`
+const MenuProfile = styled.div`
   padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 `;
 
-const SettingsAvatar = styled.img`
+const MenuAvatar = styled.img`
   width: 56px;
   height: 56px;
   border-radius: 50%;
   object-fit: cover;
 `;
 
-const SettingsName = styled.p<{ $isSleepMode: boolean }>`
+const MenuName = styled.p<{ $isSleepMode: boolean }>`
   font-size: 1rem;
   font-weight: 700;
   color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
@@ -579,28 +516,20 @@ const SettingsName = styled.p<{ $isSleepMode: boolean }>`
   transition: color 0.6s ease;
 `;
 
-const SettingsSubText = styled.p<{ $isSleepMode: boolean }>`
+const MenuSubText = styled.p<{ $isSleepMode: boolean }>`
   font-size: 0.8rem;
   color: ${({ $isSleepMode }) => ($isSleepMode ? 'rgba(255,255,255,0.55)' : '#9CA3AF')};
   margin: 0;
   transition: color 0.6s ease;
 `;
 
-const SettingsDivider = styled.div<{ $isSleepMode: boolean }>`
-  height: 1px;
-  background: ${({ $isSleepMode }) =>
-    $isSleepMode ? 'rgba(255,255,255,0.12)' : '#F3F4F6'};
-  margin: 0 20px;
-  transition: background 0.6s ease;
-`;
-
-const SettingsMenuList = styled.ul`
+const MenuSettingsList = styled.ul`
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
 `;
 
-const SettingsMenuItem = styled.li<{ $isSleepMode: boolean }>`
+const MenuSettingsItem = styled.li<{ $isSleepMode: boolean }>`
   padding: 16px 20px;
   font-size: 0.95rem;
   font-weight: 500;
@@ -610,6 +539,29 @@ const SettingsMenuItem = styled.li<{ $isSleepMode: boolean }>`
   &:hover {
     background: ${({ $isSleepMode }) =>
       $isSleepMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'};
+  }
+`;
+
+const MenuSearchWrapper = styled.div`
+  padding: 16px 20px;
+  margin-top: auto;
+`;
+
+const MenuSearchInput = styled.input<{ $isSleepMode: boolean }>`
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid ${({ $isSleepMode }) =>
+    $isSleepMode ? 'rgba(255,255,255,0.18)' : '#E5E7EB'};
+  background: ${({ $isSleepMode }) =>
+    $isSleepMode ? 'rgba(255,255,255,0.08)' : '#F9FAFB'};
+  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.6s ease, background 0.6s ease;
+  &::placeholder {
+    color: ${({ $isSleepMode }) =>
+      $isSleepMode ? 'rgba(255,255,255,0.35)' : '#9CA3AF'};
   }
 `;
 
@@ -660,8 +612,36 @@ export default function LoungeHome() {
   // ── 수면 모드 상태 (기존 유지)
   const [isSleepMode, setIsSleepMode] = useState(false);
 
+  // ── 통계 별도 state (기상 버튼 클릭 시 즉시 반영)
+  const [sleepingMembers, setSleepingMembers] = useState(0);
+  const [achieveRate, setAchieveRate] = useState(0);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+
+  // ── 찌르기 오버레이 상태
+  const [pokeMessage, setPokeMessage] = useState<string | null>(null);
+  const [pokeExiting, setPokeExiting] = useState(false);
+  const pokeTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  /** 찌르기 배너를 표시하고 2.5초 후 fadeOut, 2.85초 후 제거 */
+  const showPokeBanner = (msg: string) => {
+    pokeTimersRef.current.forEach(clearTimeout);
+    pokeTimersRef.current = [];
+    setPokeMessage(msg);
+    setPokeExiting(false);
+    const t1 = setTimeout(() => setPokeExiting(true), 2500);
+    const t2 = setTimeout(() => {
+      setPokeMessage(null);
+      setPokeExiting(false);
+    }, 2850);
+    pokeTimersRef.current = [t1, t2];
+  };
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => { pokeTimersRef.current.forEach(clearTimeout); };
+  }, []);
 
   // ── ✅ [수정] API 호출: nickname + target_time + current_status 모두 반영
   useEffect(() => {
@@ -685,23 +665,19 @@ export default function LoungeHome() {
           // current_status가 'sleeping'이면 수면 모드로 초기화
           setIsSleepMode(current_status === 'sleeping');
 
-          // ── 그룹 멤버 피드 반영: 가능한 키명을 순서대로 시도
-          const members =
-            data.group_members ??
-            data.members ??
-            data.groupMembers ??
-            null;
+          // ── 그룹 멤버 피드 반영: /api/feed 엔드포인트에서 별도 조회
+          const feedResponse = await fetchFeedData();
+          const feedData = feedResponse?.data ?? null;
 
-          if (Array.isArray(members) && members.length > 0) {
-            setFeedList(members as FeedMember[]);
+          if (Array.isArray(feedData) && feedData.length > 0) {
+            const members: FeedMember[] = feedData.map((m: { user_id: string; nickname: string; status: string }) => ({
+              id: m.user_id,
+              nickname: m.nickname,
+              status: m.status as SleepStatus,
+            }));
+            setFeedList(members);
           } else {
-            // fallback: 멤버 데이터가 없거나 비어있으면 본인 1명으로 구성
-            const selfEntry: FeedMember = {
-              id: 'self',
-              nickname: nickname ?? userName ?? '사용자',
-              status: (current_status as SleepStatus) ?? 'before_sleep',
-            };
-            setFeedList([selfEntry]);
+            setFeedList([]);
           }
         }
       } catch (err) {
@@ -714,32 +690,32 @@ export default function LoungeHome() {
     loadData();
   }, []);
 
-  // ── 폰 뒤집기 감지 (Android 및 기타 기기)
+  // ── 폰 뒤집기 감지: isSleepMode일 때만 활성화
+  const { isFaceDown } = useFaceDownDetector(isSleepMode);
+
+  // ── feedList 변경 시 통계 동기화
   useEffect(() => {
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      // beta: 앞뒤 기울기 (-180 ~ 180)
-      // gamma: 좌우 기울기 (-90 ~ 90)
-      // 폰이 뒤집힌 상태 = beta가 -90도 이하이거나 gamma의 절댓값이 90에 가까울 때
-      if (e.beta !== null && Math.abs(e.beta) > 150) {
-        setIsSleepMode(true);
+    const total = feedList.length;
+    const sleeping = feedList.filter(m =>
+      m.status === 'sleeping'
+    ).length;
+    setSleepingMembers(sleeping);
+    setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
+  }, [feedList]);
+
+  // ── 찌르기 수신 폴링 (5초 간격)
+  // TODO: 백엔드에서 GET /api/poke/notification 구현 후 활성화됩니다
+  useEffect(() => {
+    const poll = async () => {
+      const result = await fetchPokeNotification();
+      if (result?.fromNickname) {
+        showPokeBanner(`${result.fromNickname}님이 콕 찔렀어요.`);
       }
     };
-
-    // iOS 13+ 권한 요청 필요
-    if (
-      typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
-    ) {
-      // iOS: 버튼 클릭 등 사용자 인터랙션 후에만 권한 요청 가능
-      // → 수면 시작 버튼 클릭 시 권한 요청하도록 handleSleepStart에 추가
-    } else {
-      // Android 및 기타: 바로 이벤트 등록
-      window.addEventListener('deviceorientation', handleOrientation);
-    }
-
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
-    };
+    const intervalId = setInterval(poll, 5000);
+    return () => clearInterval(intervalId);
+  // showPokeBanner는 render마다 재생성되지 않도록 deps에서 제외
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── computed (기존 유지)
@@ -749,66 +725,76 @@ export default function LoungeHome() {
     ? getRemainingTimeText(rawTargetTime)
     : '목표 시간을 설정해 주세요';
 
-  // ── 통계 자동 계산 (feedList 기반)
+  // ── 통계는 별도 state로 관리 (sleepingMembers, achieveRate)
   console.log('[DEBUG] feedList:', JSON.stringify(feedList));
   const totalMembers = feedList.length;
-  const sleepingMembers = feedList.filter(m =>
-    typeof m.status === 'string' && m.status.toLowerCase().includes('sleep')
-  ).length;
-  const achieveRate = totalMembers > 0
-    ? Math.round((sleepingMembers / totalMembers) * 100)
-    : 0;
+
+  // ── 실시간 피드에서 현재 로그인한 유저 제외
+  const visibleFeed = feedList.filter(m => m.nickname !== apiNickname);
 
   // ── ✅ [수정] 표시할 닉네임 우선순위: API > userStore > '사용자'
   const displayName = apiNickname || userName || '사용자';
 
+  const handlePoke = async (target: FeedMember) => {
+    showPokeBanner(`${target.nickname}님을 콕 찔렀습니다.`);
+    // TODO: 백엔드 POST /api/poke 구현 후 실제 전송됩니다
+    await sendPoke(target.id);
+  };
+
   const handleSleepStart = async () => {
-    // iOS 13+ 권한 요청
+    const newSleepMode = !isSleepMode;
+
+    // iOS 13+: 수면 시작 시 방향 센서 권한 요청 (사용자 제스처 내에서 호출해야 함)
     if (
+      newSleepMode &&
       typeof DeviceOrientationEvent !== 'undefined' &&
       typeof (DeviceOrientationEvent as any).requestPermission === 'function'
     ) {
       try {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
-        if (permission === 'granted') {
-          window.addEventListener('deviceorientation', (e: DeviceOrientationEvent) => {
-            if (e.beta !== null && Math.abs(e.beta) > 150) {
-              setIsSleepMode(true);
-            }
-          });
-        }
+        await (DeviceOrientationEvent as any).requestPermission();
       } catch (err) {
         console.error('방향 센서 권한 요청 실패:', err);
       }
     }
-
-    const newSleepMode = !isSleepMode;
     setIsSleepMode(newSleepMode);
 
     // feedList에서 현재 사용자의 status도 함께 업데이트 → sleepingMembers / achieveRate 반영
-    setFeedList(prev =>
-      prev.map(m =>
-        m.nickname === displayName
-          ? { ...m, status: (newSleepMode ? 'sleeping' : 'before_sleep') as SleepStatus }
-          : m
-      )
+    // nickname 매칭 실패 대비 id === 'self' OR 조건 추가
+    const newFeed = feedList.map(m =>
+      m.nickname === displayName || m.id === 'self'
+        ? { ...m, status: (newSleepMode ? 'sleeping' : 'before_sleep') as SleepStatus }
+        : m
     );
+    setFeedList(newFeed);
+
+    // 기상 버튼 클릭 시 달성률·취침 현황 즉시 반영
+    const total = newFeed.length;
+    const sleeping = newFeed.filter(m =>
+      m.status === 'sleeping'
+    ).length;
+    setSleepingMembers(sleeping);
+    setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
 
     console.log(newSleepMode ? '수면 시작!' : '기상!');
   };
   const navigate = useNavigate();
 
+  // 수면 모드 + 폰 뒤집힌 상태 → 완전 검정 화면
+  if (isSleepMode && isFaceDown) {
+    return (
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#000000',
+        zIndex: 9999,
+      }} />
+    );
+  }
+
   return (
     <PageRoot $isSleepMode={isSleepMode}>
 
       <Header>
-        <IconBtn aria-label="설정 열기" onClick={() => setIsSettingsOpen(true)}>
-          <img
-            src={isSleepMode ? '/settings2.png' : '/settings.png'}
-            alt="설정"
-            style={{ width: '24px', height: '24px' }}
-          />
-        </IconBtn>
         <LogoImg
           src={isSleepMode ? '/logo_white.png' : '/logo_black.png'}
           alt="SleepMate"
@@ -867,13 +853,13 @@ export default function LoungeHome() {
             <p style={{ fontSize: '0.8rem', color: T.textMuted, textAlign: 'center', padding: '8px 0' }}>
               불러오는 중...
             </p>
-          ) : feedList.length === 0 ? (
+          ) : visibleFeed.length === 0 ? (
             <p style={{ fontSize: '0.8rem', color: T.textMuted, textAlign: 'center', padding: '8px 0' }}>
               그룹 멤버가 없습니다.
             </p>
           ) : (
             <FeedList>
-              {feedList.filter(m => m.nickname !== apiNickname).map((m, i) => {
+              {visibleFeed.map((m, i) => {
                 const meta = statusMeta(m.status);
                 return (
                   <FeedItem key={m.id ?? i}>
@@ -887,7 +873,11 @@ export default function LoungeHome() {
                         {meta.label}
                       </FeedStatusText>
                     </FeedInfo>
-                    <PokeBtn aria-label={`${m.nickname}님 콕 찌르기`} type="button">
+                    <PokeBtn
+                      aria-label={`${m.nickname}님 콕 찌르기`}
+                      type="button"
+                      onClick={() => handlePoke(m)}
+                    >
                       <img src="/hand.png" alt="콕 찌르기" />
                     </PokeBtn>
                   </FeedItem>
@@ -911,6 +901,11 @@ export default function LoungeHome() {
         </SleepBtnStyled>
       </FloatArea>
 
+      {/* 찌르기 오버레이: 찌른 경우 "OO님을 콕 찔렀습니다." / 찔린 경우 "OO님이 콕 찔렀어요." */}
+      {pokeMessage && (
+        <PokeOverlay message={pokeMessage} exiting={pokeExiting} />
+      )}
+
       <MenuOverlay $isOpen={isMenuOpen} onClick={() => setIsMenuOpen(false)} />
       <MenuPanel $isOpen={isMenuOpen} $isSleepMode={isSleepMode}>
         <MenuHeader>
@@ -920,49 +915,37 @@ export default function LoungeHome() {
 
         <MenuDivider $isSleepMode={isSleepMode} />
 
-        <MenuList>
-          <MenuItem $isSleepMode={isSleepMode}>👤 마이페이지</MenuItem>
+        <MenuProfile>
+          <MenuAvatar src="/profile1.png" alt="프로필" />
+          <MenuName $isSleepMode={isSleepMode}>{apiNickname || '사용자'}</MenuName>
+          <MenuSubText $isSleepMode={isSleepMode}>마이페이지</MenuSubText>
+        </MenuProfile>
+
+        <MenuDivider $isSleepMode={isSleepMode} />
+
+        <MenuSettingsList>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/time')}>🕐 수면 시간 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>🏠 메인 홈</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>🔔 소식 / 알림</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode}>👥 그룹 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>📋 리포트</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>📢 공지사항</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => { setIsMenuOpen(false); setIsReportOpen(true); }}>📋 리포트</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>❓ 고객센터</MenuItem>
-          <MenuDivider $isSleepMode={isSleepMode} />
-        </MenuList>
+        </MenuSettingsList>
+
+        <MenuSearchWrapper>
+          <MenuSearchInput
+            $isSleepMode={isSleepMode}
+            type="text"
+            placeholder="검색"
+          />
+        </MenuSearchWrapper>
       </MenuPanel>
 
-      <SettingsOverlay $isOpen={isSettingsOpen} onClick={() => setIsSettingsOpen(false)} />
-      <SettingsPanel $isOpen={isSettingsOpen} $isSleepMode={isSleepMode}>
-        <SettingsHeader>
-          <SettingsTitle $isSleepMode={isSleepMode}>Settings</SettingsTitle>
-          <SettingsCloseBtn $isSleepMode={isSleepMode} onClick={() => setIsSettingsOpen(false)}>✕</SettingsCloseBtn>
-        </SettingsHeader>
-
-        <SettingsProfile>
-          <SettingsAvatar src="/profile1.png" alt="프로필" />
-          <SettingsName $isSleepMode={isSleepMode}>{apiNickname || '사용자'}</SettingsName>
-          <SettingsSubText $isSleepMode={isSleepMode}>계정 설정</SettingsSubText>
-        </SettingsProfile>
-
-        <SettingsDivider $isSleepMode={isSleepMode} />
-
-        <SettingsMenuList>
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/time')}>🕐 수면 시간 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode}>👥 그룹 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-        </SettingsMenuList>
-      </SettingsPanel>
-
+      {isReportOpen && <Report onClose={() => setIsReportOpen(false)} />}
     </PageRoot>
   );
 }
