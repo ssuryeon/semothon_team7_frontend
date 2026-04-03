@@ -29,3 +29,4 @@ storybook-static
 
 *.d.ts
 !src/styles/styled.d.ts
+!src/vite-env.d.ts
