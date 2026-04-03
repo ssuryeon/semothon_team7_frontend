@@ -739,6 +739,9 @@ export default function LoungeHome() {
   console.log('[DEBUG] feedList:', JSON.stringify(feedList));
   const totalMembers = feedList.length;
 
+  // ── 실시간 피드에서 현재 로그인한 유저 제외
+  const visibleFeed = feedList.filter(m => m.nickname !== apiNickname);
+
   // ── ✅ [수정] 표시할 닉네임 우선순위: API > userStore > '사용자'
   const displayName = apiNickname || userName || '사용자';
 
@@ -861,13 +864,13 @@ export default function LoungeHome() {
             <p style={{ fontSize: '0.8rem', color: T.textMuted, textAlign: 'center', padding: '8px 0' }}>
               불러오는 중...
             </p>
-          ) : feedList.length === 0 ? (
+          ) : visibleFeed.length === 0 ? (
             <p style={{ fontSize: '0.8rem', color: T.textMuted, textAlign: 'center', padding: '8px 0' }}>
               그룹 멤버가 없습니다.
             </p>
           ) : (
             <FeedList>
-              {feedList.map((m, i) => {
+              {visibleFeed.map((m, i) => {
                 const meta = statusMeta(m.status);
                 return (
                   <FeedItem key={m.id ?? i}>
