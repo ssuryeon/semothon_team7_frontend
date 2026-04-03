@@ -11,7 +11,7 @@ type AlarmState = {
 
 export const alarmStore = create<AlarmState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             push_alarm: false,
             movement_alarm: false,
 

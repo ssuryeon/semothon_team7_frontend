@@ -11,7 +11,7 @@ type GroupState = {
     join: (inviteCode:string, groupName:string, groupId:string) => void,
 }
 
-export const groupStore = create<GroupState>((set, get) => ({
+export const groupStore = create<GroupState>((set) => ({
     groupName : '',
     maxNum: 99999,
     groupId: '',

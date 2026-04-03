@@ -18,7 +18,7 @@ type UserState = {
 
 export const userStore = create<UserState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             name: '',
             email: '',
             accessToken: '',

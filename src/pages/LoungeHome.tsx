@@ -17,9 +17,9 @@ interface FeedMember {
   status: SleepStatus;
 }
 
-interface HomeData {
-  targetTime: string;
-}
+// interface HomeData {
+//   targetTime: string;
+// }
 
 // ─────────────────────────────────────────────
 // 시간 변환 유틸
