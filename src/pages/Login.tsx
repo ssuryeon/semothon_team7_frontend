@@ -17,6 +17,7 @@ function Login() {
     const navigate = useNavigate();
     const setUserinfo = userStore((state) => state.login);
     const setName = userStore((state) => state.setName);
+    const setTime = userStore((state) => state.setTime);
 
     const onClick = async () => {
         const res = await login(email, password);
@@ -34,6 +35,7 @@ function Login() {
             if(res2) {
                 console.log(res2);
                 setName(res2.nickname);
+                setTime(res2.target_time);
             }
             navigate('/lounge');
         }
