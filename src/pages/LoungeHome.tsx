@@ -660,6 +660,10 @@ export default function LoungeHome() {
   // ── 수면 모드 상태 (기존 유지)
   const [isSleepMode, setIsSleepMode] = useState(false);
 
+  // ── 통계 별도 state (기상 버튼 클릭 시 즉시 반영)
+  const [sleepingMembers, setSleepingMembers] = useState(0);
+  const [achieveRate, setAchieveRate] = useState(0);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -742,6 +746,16 @@ export default function LoungeHome() {
     };
   }, []);
 
+  // ── feedList 변경 시 통계 동기화
+  useEffect(() => {
+    const total = feedList.length;
+    const sleeping = feedList.filter(m =>
+      typeof m.status === 'string' && m.status.toLowerCase().includes('sleep')
+    ).length;
+    setSleepingMembers(sleeping);
+    setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
+  }, [feedList]);
+
   // ── computed (기존 유지)
   //    getRemainingTimeText(null) 은 timeUtils에서 "목표 시간을 설정해 주세요" 반환 필요
   //    → 아래에서 null 케이스를 안전하게 처리
@@ -749,15 +763,9 @@ export default function LoungeHome() {
     ? getRemainingTimeText(rawTargetTime)
     : '목표 시간을 설정해 주세요';
 
-  // ── 통계 자동 계산 (feedList 기반)
+  // ── 통계는 별도 state로 관리 (sleepingMembers, achieveRate)
   console.log('[DEBUG] feedList:', JSON.stringify(feedList));
   const totalMembers = feedList.length;
-  const sleepingMembers = feedList.filter(m =>
-    typeof m.status === 'string' && m.status.toLowerCase().includes('sleep')
-  ).length;
-  const achieveRate = totalMembers > 0
-    ? Math.round((sleepingMembers / totalMembers) * 100)
-    : 0;
 
   // ── ✅ [수정] 표시할 닉네임 우선순위: API > userStore > '사용자'
   const displayName = apiNickname || userName || '사용자';
@@ -786,13 +794,21 @@ export default function LoungeHome() {
     setIsSleepMode(newSleepMode);
 
     // feedList에서 현재 사용자의 status도 함께 업데이트 → sleepingMembers / achieveRate 반영
-    setFeedList(prev =>
-      prev.map(m =>
-        m.nickname === displayName
-          ? { ...m, status: (newSleepMode ? 'sleeping' : 'before_sleep') as SleepStatus }
-          : m
-      )
+    // nickname 매칭 실패 대비 id === 'self' OR 조건 추가
+    const newFeed = feedList.map(m =>
+      m.nickname === displayName || m.id === 'self'
+        ? { ...m, status: (newSleepMode ? 'sleeping' : 'before_sleep') as SleepStatus }
+        : m
     );
+    setFeedList(newFeed);
+
+    // 기상 버튼 클릭 시 달성률·취침 현황 즉시 반영
+    const total = newFeed.length;
+    const sleeping = newFeed.filter(m =>
+      typeof m.status === 'string' && m.status.toLowerCase().includes('sleep')
+    ).length;
+    setSleepingMembers(sleeping);
+    setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
 
     console.log(newSleepMode ? '수면 시작!' : '기상!');
   };
