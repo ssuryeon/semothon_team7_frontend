@@ -6,7 +6,7 @@ import {Container} from '../components/Container.tsx';
 import Button from '../components/Button.tsx';
 import {useNavigate, Link} from 'react-router';
 import {signUp, login, setNickname} from '../utils/auth.tsx';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {userStore} from '../stores/UserStore.tsx';
 
 function SignUp() {
@@ -18,11 +18,6 @@ function SignUp() {
     const setUserinfo = userStore((state) => state.signUp);
     const nameState = userStore((state) => state.name);
     const accessToken = userStore((state) => state.accessToken);
-    useEffect(() => {
-        if(accessToken && accessToken != '') {
-            navigate('/login');
-        }
-    }, [])
     
     const onClick = async () => {
         const signUp_res = await signUp(name, email, password);
