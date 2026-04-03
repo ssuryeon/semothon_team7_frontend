@@ -7,6 +7,7 @@ import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
 import { fetchHomeData, fetchFeedData, sendPoke, fetchPokeNotification } from '../utils/api';
 import PokeOverlay from '../components/PokeOverlay';
+import Report from './Report';
 import { useNavigate } from 'react-router';
 
 // ─────────────────────────────────────────────
@@ -616,6 +617,7 @@ export default function LoungeHome() {
   const [achieveRate, setAchieveRate] = useState(0);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   // ── 찌르기 오버레이 상태
   const [pokeMessage, setPokeMessage] = useState<string | null>(null);
@@ -930,7 +932,7 @@ export default function LoungeHome() {
           <MenuDivider $isSleepMode={isSleepMode} />
           <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuSettingsItem $isSleepMode={isSleepMode}>📋 리포트</MenuSettingsItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => { setIsMenuOpen(false); setIsReportOpen(true); }}>📋 리포트</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
         </MenuSettingsList>
 
@@ -943,6 +945,7 @@ export default function LoungeHome() {
         </MenuSearchWrapper>
       </MenuPanel>
 
+      {isReportOpen && <Report onClose={() => setIsReportOpen(false)} />}
     </PageRoot>
   );
 }
