@@ -33,6 +33,7 @@ function Onboarding(){
     const token = userStore((state) => state.accessToken);
     const setTime = userStore((state) => state.setTime);
     const [menu, setMenu] = useState(1);
+    const groupComplete = userStore((state) => state.groupCompleted);
 
     useEffect(() => {
         switch(location.pathname) {
@@ -58,7 +59,7 @@ function Onboarding(){
                 navigate('/onboarding');
                 break
             case '/onboarding/group':
-                navigate('/onboarding/alarm');
+                if(groupComplete) navigate('/onboarding/alarm');
                 break
         }
     }
@@ -81,6 +82,7 @@ function Onboarding(){
                 navigate('/onboarding/group');
                 break
             case '/onboarding/group':
+                navigate('/lounge');
                 break
         }
     }

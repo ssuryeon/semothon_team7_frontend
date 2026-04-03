@@ -32,8 +32,8 @@ function Login() {
             setUserinfo(userinfo.email as string, accessToken);
             const res2 = await getMyInfo(accessToken);
             if(res2) {
-                console.log(res2.data);
-                setName(res2.data.nickname);
+                console.log(res2);
+                setName(res2.nickname);
             }
             navigate('/lounge');
         }

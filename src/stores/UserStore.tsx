@@ -7,11 +7,13 @@ type UserState = {
     accessToken: string
     refreshToken: string
     target_sleep_time: string
+    groupCompleted: boolean
 
     signUp: (name: string, email: string, accessToken: string, refreshToken: string) => void
     login: (email: string, accessToken: string) => void,
     setName: (name: string) => void,
     setTime: (target_sleep_time:string) => void
+    setGroupComplete: () => void
 }
 
 export const userStore = create<UserState>()(
@@ -22,6 +24,7 @@ export const userStore = create<UserState>()(
             accessToken: '',
             refreshToken: '',
             target_sleep_time: '',
+            groupCompleted: false,
 
             signUp: (name, email, accessToken, refreshToken) => {
                 set({
@@ -49,6 +52,12 @@ export const userStore = create<UserState>()(
                 set({
                     target_sleep_time,
                 })
+            },
+            
+            setGroupComplete: () => {
+                set((state) => ({
+                    groupCompleted: !state.groupCompleted,
+                }))
             }
         }),
         {

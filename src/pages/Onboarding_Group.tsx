@@ -23,7 +23,6 @@ const ScrollContainer = styled.div`
     }
 `;
 
-
 function Onboarding_Group(){
     const theme = useTheme();
     const [groupName, setGroupName] = useState('');
@@ -33,6 +32,7 @@ function Onboarding_Group(){
     const accessToken = userStore((state) => state.accessToken);
 
     const setGroup = groupStore((state) => state.setGroup);
+    const setComplete = userStore((state) => state.setGroupComplete);
     const setInfo = groupStore((state) => state.setIdCode);
     const join = groupStore((state) => state.join);
     const id = groupStore((state) => state.groupId);
@@ -47,6 +47,7 @@ function Onboarding_Group(){
             setInfo(res.id, res.code);
             console.log(`state: ${id}, ${code}`)
             setGroupComplete(true);
+            setComplete();
         }
         else alert('그룹 생성 중 오류 발생');
     }
@@ -58,6 +59,7 @@ function Onboarding_Group(){
             join(inviteCode, res.name, res.id);
             console.log(`state: ${id}, ${code}`)
             setGroupComplete(true);
+            setComplete();
         }
         else alert('그룹 가입 중 오류 발생');
     }
@@ -93,7 +95,7 @@ function Onboarding_Group(){
                                 <span style={{color: theme.btnColor, fontSize: 20, fontWeight: 700, marginBottom: 10, display:'inline-block'}}>그룹 가입하기</span>
                                 <Input placeholder='초대 코드 입력' style={{backgroundColor: theme.white, marginBottom: 10}} value={inviteCode} onChange={(e:any) => setInviteCode(e.currentTarget.value)}/>
                                 <div style={{width: '100%', position: 'relative', marginBottom: 10, boxSizing: 'border-box'}}>
-                                    <Input placeholder='그룹명으로 찾기' style={{backgroundColor: theme.white, marginBottom: 0}} value={inviteCode} />
+                                    <Input placeholder='그룹명으로 찾기' style={{backgroundColor: theme.white, marginBottom: 0}} />
                                     <IoIosSearch style={{position: 'absolute', right: 15, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer'}} size={16.5} color={theme.GreyText}/>
                                 </div>
                                 <Button text='가입' onClick={onJoinClick}/>

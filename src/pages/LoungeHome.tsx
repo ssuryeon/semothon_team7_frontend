@@ -5,6 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
 import { fetchHomeData } from '../utils/api';
+import { useNavigate } from 'react-router';
 
 // ─────────────────────────────────────────────
 // Types
@@ -795,6 +796,7 @@ export default function LoungeHome() {
 
     console.log(newSleepMode ? '수면 시작!' : '기상!');
   };
+  const navigate = useNavigate();
 
   return (
     <PageRoot $isSleepMode={isSleepMode}>
@@ -950,9 +952,9 @@ export default function LoungeHome() {
         <SettingsDivider $isSleepMode={isSleepMode} />
 
         <SettingsMenuList>
-          <SettingsMenuItem $isSleepMode={isSleepMode}>🕐 수면 시간 설정</SettingsMenuItem>
+          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/time')}>🕐 수면 시간 설정</SettingsMenuItem>
           <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode}>👤 닉네임 설정</SettingsMenuItem>
+          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</SettingsMenuItem>
           <SettingsDivider $isSleepMode={isSleepMode} />
           <SettingsMenuItem $isSleepMode={isSleepMode}>👥 그룹 설정</SettingsMenuItem>
           <SettingsDivider $isSleepMode={isSleepMode} />
