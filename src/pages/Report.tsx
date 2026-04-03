@@ -70,9 +70,13 @@ export default function Report({ onClose }: ReportProps) {
 }
 
 const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 60;
+  overflow-y: auto;
   background: #f2f2f2;
   display: flex;
   flex-direction: column;
