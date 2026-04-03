@@ -4,7 +4,7 @@ import Input from '../components/Input.tsx';
 import LogoWhite from '../components/LogoWhite.tsx';
 import Button from '../components/Button.tsx';
 import {Container} from '../components/Container.tsx';
-import {Link} from 'react-router';
+import {Link, useNavigate} from 'react-router';
 import {login} from '../utils/auth.tsx';
 import { getMyInfo } from '../utils/modify_setting.tsx';
 import {useState} from 'react';
@@ -14,6 +14,7 @@ function Login() {
     const theme = useTheme()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
     const setUserinfo = userStore((state) => state.login);
     const setName = userStore((state) => state.setName);
 
@@ -34,6 +35,7 @@ function Login() {
                 console.log(res2.data);
                 setName(res2.data.nickname);
             }
+            navigate('/lounge');
         }
     }
 
