@@ -871,7 +871,7 @@ export default function LoungeHome() {
             </p>
           ) : (
             <FeedList>
-              {feedList.filter(m => m.nickname !== apiNickname).map((m, i) => {
+              {feedList.map((m, i) => {
                 const meta = statusMeta(m.status);
                 return (
                   <FeedItem key={m.id ?? i}>
