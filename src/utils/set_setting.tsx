@@ -62,3 +62,18 @@ export async function joinGroup(invite_code:string, accessToken:string) {
     }
     else return null;
 }
+
+export async function getGroups(accessToken:string) {
+    console.log(`[getGroups start] accessToken: ${accessToken}`);
+    const res = await (await fetch(`${BASE_URL}/api/groups/my`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
+    })).json();
+    console.log(res);
+
+    if(res.status == 'success') return res.data;
+    else return null;
+}

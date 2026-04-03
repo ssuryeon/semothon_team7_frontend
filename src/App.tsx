@@ -10,6 +10,9 @@ import Setting_Time from './pages/Setting_Time';
 import Setting_Nickname from './pages/Setting_Nickname';
 import LoungeHome from './pages/LoungeHome'; // 👈 1. 우리가 만든 라운지 화면 불러오기!
 import Setting_Alarm from './pages/Setting_Alarm';
+import Setting_Group from "./pages/Setting_Group";
+import Setting_Group_Default from "./pages/Setting_Group_Default";
+import Setting_Group_CreateOrJoin from "./pages/Setting_Group_CreateOrJoin";
 import {createBrowserRouter, RouterProvider} from 'react-router';
 
 const router = createBrowserRouter([
@@ -58,6 +61,20 @@ const router = createBrowserRouter([
   {
     path: '/setting/alarm',
     Component: Setting_Alarm,
+  },
+  {
+    path: '/setting/group',
+    Component: Setting_Group,
+    children: [
+      {
+        index: true,
+        Component: Setting_Group_Default,
+      },
+      {
+        path: 'create_join',
+        Component: Setting_Group_CreateOrJoin,
+      }
+    ]
   }
 ])
 

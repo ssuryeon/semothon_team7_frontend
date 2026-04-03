@@ -35,7 +35,7 @@ function Setting_Nickname(){
                     (
                         <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'absolute', top: '50%', transform: 'translateY(-100%)'}}>
                                 <img src='/checkIcon.png' style={{width: 100, height: 100}}/>
-                                <span style={{fontSize: 12, color: theme.GreyText, marginTop: 16}}>수면시간 설정이 완료되었습니다.</span>
+                                <span style={{fontSize: 12, color: theme.GreyText, marginTop: 16}}>닉네임 설정이 완료되었습니다.</span>
                         </div>
                     ) :
                     (
