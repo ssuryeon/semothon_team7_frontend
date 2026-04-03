@@ -5,7 +5,8 @@ import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
-import { fetchHomeData, fetchFeedData, sendPoke, fetchPokeNotification } from '../utils/api';
+import { fetchHomeData, fetchFeedData, sendPoke, fetchPokeNotification, startSleep, stopSleep } from '../utils/api';
+import { supabase } from '../utils/auth';
 import PokeOverlay from '../components/PokeOverlay';
 import Report from './Report';
 import { useNavigate } from 'react-router';
@@ -611,6 +612,8 @@ export default function LoungeHome() {
 
   // ── 수면 모드 상태 (기존 유지)
   const [isSleepMode, setIsSleepMode] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
   // useEffect deps 없이 최신 isSleepMode 값을 폴링 콜백에서 읽기 위한 ref
   const isSleepModeRef = useRef(isSleepMode);
   isSleepModeRef.current = isSleepMode;
@@ -721,6 +724,30 @@ export default function LoungeHome() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Supabase Realtime: 다른 멤버 수면 상태 변경 실시간 반영
+  useEffect(() => {
+    const channel = supabase
+      .channel('realtime-sleep-feed')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'users' },
+        (payload) => {
+          console.log('Realtime 상태 변경 감지:', payload);
+          const updated = payload.new as { id: string; nickname: string; current_status: string };
+          setFeedList(prev => prev.map(m =>
+            m.id === updated.id
+              ? { ...m, status: (updated.current_status || m.status) as SleepStatus }
+              : m
+          ));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   // ── computed (기존 유지)
   //    getRemainingTimeText(null) 은 timeUtils에서 "목표 시간을 설정해 주세요" 반환 필요
   //    → 아래에서 null 케이스를 안전하게 처리
@@ -763,6 +790,28 @@ export default function LoungeHome() {
         console.error('방향 센서 권한 요청 실패:', err);
       }
     }
+
+    if (newSleepMode) {
+      // 수면 시작
+      const result = await startSleep('');
+      if (!result || result.status !== 'success') {
+        console.error('수면 시작 API 실패');
+        return;
+      }
+      setSessionId(result.data?.session_id ?? null);
+    } else {
+      // 기상
+      if (sessionId) {
+        const result = await stopSleep(sessionId);
+        if (!result || result.status !== 'success') {
+          console.error('기상 API 실패');
+          return;
+        }
+      }
+      setSessionId(null);
+    }
+
+    // API 성공 후 로컬 state 업데이트
     setIsSleepMode(newSleepMode);
 
     // feedList에서 현재 사용자의 status도 함께 업데이트 → sleepingMembers / achieveRate 반영

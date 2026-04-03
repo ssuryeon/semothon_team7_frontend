@@ -2,7 +2,7 @@ import {createClient} from '@supabase/supabase-js'
 const BASE_URL='https://semothon-team7-backend.onrender.com';
 
 // vite에서는 process.env 말고 import.meta.env 사용
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY)
+export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY)
 
 export async function signUp(name:string, email:string, password:string) {
     console.log(`[signUp start] name: ${name}, email: ${email}, password: ${password}`)
