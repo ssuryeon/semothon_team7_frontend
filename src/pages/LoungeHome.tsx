@@ -488,91 +488,22 @@ const MenuDivider = styled.hr<{ $isSleepMode: boolean }>`
   transition: border-color 0.6s ease;
 `;
 
-const MenuList = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px;
-`;
 
-const MenuItem = styled.button<{ $isSleepMode: boolean }>`
-  background: none;
-  border: none;
-  text-align: left;
-  font-size: 0.95rem;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
-  padding: 18px 0;
-  cursor: pointer;
-  font-weight: 500;
-  transition: color 0.6s ease;
-  &:hover {
-    background: ${({ $isSleepMode }) =>
-      $isSleepMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'};
-  }
-`;
-
-const SettingsOverlay = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 40;
-`;
-
-const SettingsPanel = styled.div<{ $isOpen: boolean; $isSleepMode: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 75%;
-  max-width: 320px;
-  z-index: 50;
-  background: ${({ $isSleepMode }) => ($isSleepMode ? '#1A1A2E' : 'white')};
-  display: flex;
-  flex-direction: column;
-  transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
-  transition: transform 0.3s ease, background 0.6s ease;
-`;
-
-const SettingsHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 52px 20px 16px;
-`;
-
-const SettingsTitle = styled.h2<{ $isSleepMode: boolean }>`
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
-  margin: 0;
-  transition: color 0.6s ease;
-`;
-
-const SettingsCloseBtn = styled.button<{ $isSleepMode: boolean }>`
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: ${({ $isSleepMode }) => ($isSleepMode ? 'rgba(255,255,255,0.6)' : '#6B7280')};
-  padding: 4px;
-  transition: color 0.6s ease;
-`;
-
-const SettingsProfile = styled.div`
+const MenuProfile = styled.div`
   padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 `;
 
-const SettingsAvatar = styled.img`
+const MenuAvatar = styled.img`
   width: 56px;
   height: 56px;
   border-radius: 50%;
   object-fit: cover;
 `;
 
-const SettingsName = styled.p<{ $isSleepMode: boolean }>`
+const MenuName = styled.p<{ $isSleepMode: boolean }>`
   font-size: 1rem;
   font-weight: 700;
   color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
@@ -580,28 +511,20 @@ const SettingsName = styled.p<{ $isSleepMode: boolean }>`
   transition: color 0.6s ease;
 `;
 
-const SettingsSubText = styled.p<{ $isSleepMode: boolean }>`
+const MenuSubText = styled.p<{ $isSleepMode: boolean }>`
   font-size: 0.8rem;
   color: ${({ $isSleepMode }) => ($isSleepMode ? 'rgba(255,255,255,0.55)' : '#9CA3AF')};
   margin: 0;
   transition: color 0.6s ease;
 `;
 
-const SettingsDivider = styled.div<{ $isSleepMode: boolean }>`
-  height: 1px;
-  background: ${({ $isSleepMode }) =>
-    $isSleepMode ? 'rgba(255,255,255,0.12)' : '#F3F4F6'};
-  margin: 0 20px;
-  transition: background 0.6s ease;
-`;
-
-const SettingsMenuList = styled.ul`
+const MenuSettingsList = styled.ul`
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
 `;
 
-const SettingsMenuItem = styled.li<{ $isSleepMode: boolean }>`
+const MenuSettingsItem = styled.li<{ $isSleepMode: boolean }>`
   padding: 16px 20px;
   font-size: 0.95rem;
   font-weight: 500;
@@ -611,6 +534,29 @@ const SettingsMenuItem = styled.li<{ $isSleepMode: boolean }>`
   &:hover {
     background: ${({ $isSleepMode }) =>
       $isSleepMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'};
+  }
+`;
+
+const MenuSearchWrapper = styled.div`
+  padding: 16px 20px;
+  margin-top: auto;
+`;
+
+const MenuSearchInput = styled.input<{ $isSleepMode: boolean }>`
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid ${({ $isSleepMode }) =>
+    $isSleepMode ? 'rgba(255,255,255,0.18)' : '#E5E7EB'};
+  background: ${({ $isSleepMode }) =>
+    $isSleepMode ? 'rgba(255,255,255,0.08)' : '#F9FAFB'};
+  color: ${({ $isSleepMode }) => ($isSleepMode ? '#FFFFFF' : '#1F2937')};
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.6s ease, background 0.6s ease;
+  &::placeholder {
+    color: ${({ $isSleepMode }) =>
+      $isSleepMode ? 'rgba(255,255,255,0.35)' : '#9CA3AF'};
   }
 `;
 
@@ -666,7 +612,6 @@ export default function LoungeHome() {
   const [achieveRate, setAchieveRate] = useState(0);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // ── ✅ [수정] API 호출: nickname + target_time + current_status 모두 반영
   useEffect(() => {
@@ -799,13 +744,6 @@ export default function LoungeHome() {
     <PageRoot $isSleepMode={isSleepMode}>
 
       <Header>
-        <IconBtn aria-label="설정 열기" onClick={() => setIsSettingsOpen(true)}>
-          <img
-            src={isSleepMode ? '/settings2.png' : '/settings.png'}
-            alt="설정"
-            style={{ width: '24px', height: '24px' }}
-          />
-        </IconBtn>
         <LogoImg
           src={isSleepMode ? '/logo_white.png' : '/logo_black.png'}
           alt="SleepMate"
@@ -917,48 +855,35 @@ export default function LoungeHome() {
 
         <MenuDivider $isSleepMode={isSleepMode} />
 
-        <MenuList>
-          <MenuItem $isSleepMode={isSleepMode}>👤 마이페이지</MenuItem>
+        <MenuProfile>
+          <MenuAvatar src="/profile1.png" alt="프로필" />
+          <MenuName $isSleepMode={isSleepMode}>{apiNickname || '사용자'}</MenuName>
+          <MenuSubText $isSleepMode={isSleepMode}>마이페이지</MenuSubText>
+        </MenuProfile>
+
+        <MenuDivider $isSleepMode={isSleepMode} />
+
+        <MenuSettingsList>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/time')}>🕐 수면 시간 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>🏠 메인 홈</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>🔔 소식 / 알림</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode}>👥 그룹 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>📋 리포트</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>📢 공지사항</MenuItem>
+          <MenuSettingsItem $isSleepMode={isSleepMode}>📋 리포트</MenuSettingsItem>
           <MenuDivider $isSleepMode={isSleepMode} />
-          <MenuItem $isSleepMode={isSleepMode}>❓ 고객센터</MenuItem>
-          <MenuDivider $isSleepMode={isSleepMode} />
-        </MenuList>
+        </MenuSettingsList>
+
+        <MenuSearchWrapper>
+          <MenuSearchInput
+            $isSleepMode={isSleepMode}
+            type="text"
+            placeholder="검색"
+          />
+        </MenuSearchWrapper>
       </MenuPanel>
-
-      <SettingsOverlay $isOpen={isSettingsOpen} onClick={() => setIsSettingsOpen(false)} />
-      <SettingsPanel $isOpen={isSettingsOpen} $isSleepMode={isSleepMode}>
-        <SettingsHeader>
-          <SettingsTitle $isSleepMode={isSleepMode}>Settings</SettingsTitle>
-          <SettingsCloseBtn $isSleepMode={isSleepMode} onClick={() => setIsSettingsOpen(false)}>✕</SettingsCloseBtn>
-        </SettingsHeader>
-
-        <SettingsProfile>
-          <SettingsAvatar src="/profile1.png" alt="프로필" />
-          <SettingsName $isSleepMode={isSleepMode}>{apiNickname || '사용자'}</SettingsName>
-          <SettingsSubText $isSleepMode={isSleepMode}>계정 설정</SettingsSubText>
-        </SettingsProfile>
-
-        <SettingsDivider $isSleepMode={isSleepMode} />
-
-        <SettingsMenuList>
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/time')}>🕐 수면 시간 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/nickname')}>👤 닉네임 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode}>👥 그룹 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-          <SettingsMenuItem $isSleepMode={isSleepMode} onClick={() => navigate('/setting/alarm')}>🔔 알림 설정</SettingsMenuItem>
-          <SettingsDivider $isSleepMode={isSleepMode} />
-        </SettingsMenuList>
-      </SettingsPanel>
 
     </PageRoot>
   );
