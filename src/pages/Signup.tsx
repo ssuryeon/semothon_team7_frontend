@@ -1,13 +1,13 @@
 import {useTheme} from 'styled-components';
-import Header from '../components/Header.tsx';
-import Input from '../components/Input.tsx';
-import LogoWhite from '../components/LogoWhite.tsx';
-import {Container} from '../components/Container.tsx';
-import Button from '../components/Button.tsx';
+import Header from '../components/Header';
+import Input from '../components/Input';
+import LogoWhite from '../components/LogoWhite';
+import {Container} from '../components/Container';
+import Button from '../components/Button';
 import {useNavigate, Link} from 'react-router';
-import {signUp, login, setNickname} from '../utils/auth.tsx';
+import {signUp, login, setNickname} from '../utils/auth';
 import {useState} from 'react';
-import {userStore} from '../stores/UserStore.tsx';
+import {userStore} from '../stores/UserStore';
 
 function SignUp() {
     const theme = useTheme();

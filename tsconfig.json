@@ -1,6 +1,7 @@
 {
   // "files": [],
   "compilerOptions": {
+    "jsx": "react-jsx",
     "declaration": false,
   },
   // "references": [

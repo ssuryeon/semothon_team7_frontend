@@ -1,14 +1,14 @@
 import {useTheme} from 'styled-components';
-import Header from '../components/Header.tsx';
-import Input from '../components/Input.tsx';
-import LogoWhite from '../components/LogoWhite.tsx';
-import Button from '../components/Button.tsx';
-import {Container} from '../components/Container.tsx';
+import Header from '../components/Header';
+import Input from '../components/Input';
+import LogoWhite from '../components/LogoWhite';
+import Button from '../components/Button';
+import {Container} from '../components/Container';
 import {Link, useNavigate} from 'react-router';
-import {login} from '../utils/auth.tsx';
-import { getMyInfo } from '../utils/modify_setting.tsx';
+import {login} from '../utils/auth';
+import { getMyInfo } from '../utils/modify_setting';
 import {useState} from 'react';
-import {userStore} from '../stores/UserStore.tsx';
+import {userStore} from '../stores/UserStore';
 
 function Login() {
     const theme = useTheme()
