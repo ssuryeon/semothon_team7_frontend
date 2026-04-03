@@ -1,11 +1,12 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
-  "include": ["src"],
+  // "files": [],
   "compilerOptions": {
     "declaration": false,
-  }
+  },
+  // "references": [
+  //   { "path": "./tsconfig.app.json" },
+  //   { "path": "./tsconfig.node.json" }
+  // ],
+  "include": ["src"],
+  "exclude": ["**/*.stories.tsx"],
 }

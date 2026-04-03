@@ -26,3 +26,6 @@ dist-ssr
 .env
 *storybook.log
 storybook-static
+
+*.d.ts
+!src/styles/styled.d.ts
