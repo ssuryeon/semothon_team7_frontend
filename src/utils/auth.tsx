@@ -47,7 +47,7 @@ export async function login(email:string, password:string) {
 }
 
 export async function setNickname(nickname:string, accessToken:string) {
-    console.log(`[setNickname start] nickname : ${nickname}`);
+    console.log(`[setNickname start] nickname : ${nickname}, ${accessToken}`);
     const res = await (await fetch(`${BASE_URL}/api/users/nickname`, {
         method: 'PUT',
         headers: {
