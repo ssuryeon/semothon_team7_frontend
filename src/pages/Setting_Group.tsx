@@ -23,7 +23,7 @@ function Setting_Group(){
             <Header name='그룹 설정'/>
             <Container style={{backgroundColor: '#E7E7E7', justifyContent: 'space-between'}}>
                 <Outlet />
-                <Button text='완료' onClick={onClick}/>
+                <Button text={location.pathname == '/setting/group' ? '추가' : '완료'} onClick={onClick}/>
             </Container>
         </div>
     )

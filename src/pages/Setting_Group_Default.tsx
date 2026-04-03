@@ -75,7 +75,6 @@ function Setting_Group_Default() {
                         <GroupCodeContainer code={group.invite_code}/>
                     </div>
                 ))}
-                <Button text='추가' style={{backgroundColor: 'rgba(42, 50, 71, 0.8)', marginTop: 8}}/>
             </Modal>
         </div>
     )
