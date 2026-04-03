@@ -104,7 +104,7 @@ const Header = styled.header`
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 16px 20px 12px;
 `;
 
@@ -125,6 +125,9 @@ const IconBtn = styled.button`
 `;
 
 const LogoImg = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   height: 22px;
   width: auto;
   object-fit: contain;
