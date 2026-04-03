@@ -14,6 +14,7 @@ type UserState = {
     setName: (name: string) => void,
     setTime: (target_sleep_time:string) => void
     setGroupComplete: () => void
+    setAccessToken: (accessToken:string) => void
 }
 
 export const userStore = create<UserState>()(
@@ -57,6 +58,12 @@ export const userStore = create<UserState>()(
             setGroupComplete: () => {
                 set((state) => ({
                     groupCompleted: !state.groupCompleted,
+                }))
+            },
+            
+            setAccessToken: (accessToken:string) => {
+                set(({
+                    accessToken,
                 }))
             }
         }),
