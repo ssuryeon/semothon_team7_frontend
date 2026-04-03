@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useFaceDownDetector } from '../hooks/useFaceDownDetector';
 import styled, { keyframes } from 'styled-components';
+import MoonPhase from '../components/MoonPhase';
 import { userStore } from '../stores/UserStore';
 import { getRemainingTimeText } from '../utils/timeUtils';
 import { fetchHomeData, fetchFeedData } from '../utils/api';
@@ -763,7 +764,7 @@ export default function LoungeHome() {
       <Main>
 
         <MoonSection aria-label="수면 현황">
-          <MoonImg src="/moon.png" alt="달" />
+          <MoonPhase sleepingCount={sleepingMembers} totalCount={totalMembers} />
           <SleepCountText>
             {totalMembers}명 중 {sleepingMembers}명 취침 중
           </SleepCountText>
