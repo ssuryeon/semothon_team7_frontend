@@ -750,7 +750,7 @@ export default function LoungeHome() {
   useEffect(() => {
     const total = feedList.length;
     const sleeping = feedList.filter(m =>
-      m.status === 'sleeping' || m.status === 'SLEEPING'
+      m.status === 'sleeping'
     ).length;
     setSleepingMembers(sleeping);
     setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
@@ -805,7 +805,7 @@ export default function LoungeHome() {
     // 기상 버튼 클릭 시 달성률·취침 현황 즉시 반영
     const total = newFeed.length;
     const sleeping = newFeed.filter(m =>
-      m.status === 'sleeping' || m.status === 'SLEEPING'
+      m.status === 'sleeping'
     ).length;
     setSleepingMembers(sleeping);
     setAchieveRate(total > 0 ? Math.round((sleeping / total) * 100) : 0);
