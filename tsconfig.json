@@ -1,13 +1,21 @@
 {
   // "files": [],
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
     "jsx": "react-jsx",
     "declaration": false,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
   },
   // "references": [
   //   { "path": "./tsconfig.app.json" },
   //   { "path": "./tsconfig.node.json" }
   // ],
+
   "include": ["src"],
   "exclude": ["**/*.stories.tsx"],
 }
