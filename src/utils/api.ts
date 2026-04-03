@@ -79,6 +79,44 @@ export async function fetchHomeData() {
     }
 }
 
+export async function startSleep(goodnight_message: string = '') {
+    const accessToken = userStore.getState().accessToken;
+    try {
+        const res = await fetch(`${BASE_URL}/api/sleep/start`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ goodnight_message }),
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (error) {
+        console.error('startSleep 실패:', error);
+        return null;
+    }
+}
+
+export async function stopSleep(session_id: string) {
+    const accessToken = userStore.getState().accessToken;
+    try {
+        const res = await fetch(`${BASE_URL}/api/sleep/stop`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ session_id }),
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (error) {
+        console.error('stopSleep 실패:', error);
+        return null;
+    }
+}
+
 export async function fetchFeedData() {
     const accessToken = userStore.getState().accessToken;
     console.log('fetchFeedData 호출됨');
